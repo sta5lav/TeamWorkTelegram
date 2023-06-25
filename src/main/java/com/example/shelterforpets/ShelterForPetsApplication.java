@@ -3,6 +3,7 @@ package com.example.shelterforpets;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //пуш dev
+//пуш release
 @SpringBootApplication
 public class ShelterForPetsApplication {
 
