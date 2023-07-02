@@ -1,12 +1,11 @@
 package com.example.shelterforpets.listener;
 
+import com.example.shelterforpets.service.MessageService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -17,8 +16,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    @Autowired
-    private TelegramBot telegramBot;
+    private final TelegramBot telegramBot;
+    private final MessageService messageService;
+
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, MessageService messageService) {
+        this.telegramBot = telegramBot;
+        this.messageService = messageService;
+    }
 
     @PostConstruct
     public void init() {
@@ -37,19 +41,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             // Process your updates here
             if (update.message().text().equals("/start")) {
                 long chatId = update.message().chat().id();
-                sendWelcomeMessage(chatId);
+                messageService.sendWelcomeMessage(chatId);
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
-    private void sendWelcomeMessage(long chatId) {
-        String welcomeText = "Привет! Я бот, и я готов помочь тебе.";
-        sendNotification(chatId, welcomeText);
-    }
-
-    public void sendNotification(long chatId, String text) {
-        SendMessage message = new SendMessage(chatId, text);
-        telegramBot.execute(message);
-    }
 }
