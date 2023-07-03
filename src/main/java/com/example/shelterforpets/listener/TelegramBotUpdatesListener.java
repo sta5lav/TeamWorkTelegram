@@ -49,6 +49,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (update.message().text().equals("/start")) {
                     long chatId = update.message().chat().id();
                     messageService.sendWelcomeMessage(chatId);
+
+
+
+
                 } else {
                     messageService.sendMessageHelpingVolunteers(update.message().chat().id(), firstName, userName);   // if an unknown request get helping volunteers
                 }

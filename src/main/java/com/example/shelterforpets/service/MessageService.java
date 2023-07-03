@@ -46,5 +46,4 @@ public class MessageService {
         logger.warn(firstName + " (" + userName + ")" + " просит Вас связаться с ним!");
     }
 
-
 }
