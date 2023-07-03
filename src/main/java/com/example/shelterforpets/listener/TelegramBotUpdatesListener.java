@@ -20,7 +20,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-
     private final TelegramBot telegramBot;
     private final MessageService messageService;
 
@@ -49,12 +48,23 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (update.message().text().equals("/start")) {
                     long chatId = update.message().chat().id();
                     messageService.sendWelcomeMessage(chatId);
-
-
-
-
+                } else if (update.message().text().equals("Приют для собак")) {
+                    long chatId = update.message().chat().id();
+                    messageService.sendDogShelterMenu(chatId);
+                } else if (update.message().text().equals("Приют для кошек")) {
+                    long chatId = update.message().chat().id();
+                    messageService.sendCatShelterMenu(chatId);
+                } else if (update.message().text().equals("Узнать информацию о приюте")) {
+                    long chatId = update.message().chat().id();
+                    messageService.sendShelterInfo(chatId);
+                } else if (update.message().text().equals("Как взять животное из приюта")) {
+                    long chatId = update.message().chat().id();
+                    messageService.sendAnimalAdoptionInstructions(chatId);
+                } else if (update.message().text().equals("Прислать отчет о питомце")) {
+                    long chatId = update.message().chat().id();
+                    messageService.sendPetReport(chatId);
                 } else {
-                    messageService.sendMessageHelpingVolunteers(update.message().chat().id(), firstName, userName);   // if an unknown request get helping volunteers
+                    messageService.sendMessageHelpingVolunteers(update.message().chat().id(), firstName, userName);
                 }
             });
         } catch (Exception e) {
@@ -62,5 +72,4 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
-
 }
