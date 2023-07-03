@@ -44,9 +44,9 @@ public class MessageService {
         this.telegramBot = telegramBot;
     }
 
-    //создаем метод для приветственного сообщения
+    //создаем метод для приветственного сообщения с выбором приюта
     public void sendWelcomeMessage(long chatId) {
-        String welcomeText = "Привет! Я бот, и я готов помочь тебе.";
+        String welcomeText = "Привет! Я бот, и я готов помочь Вам. Какой приют Вас интересует?";
         sendShelterMenu(chatId, welcomeText);
     }
 
@@ -65,8 +65,16 @@ public class MessageService {
     }
 
 
-    public void sendShelterInfo(long chatId) {
-        String shelterInfoText = "Информация о приюте:\n" +
+    public void sendDogShelterInfo(long chatId) {
+        String shelterInfoText = "Информация о приюте для собак:\n" +
+                "Адрес: ...\n" +
+                "Телефон: ...\n" +
+                "Email: ...";
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    public void sendCatShelterInfo(long chatId) {
+        String shelterInfoText = "Информация о приюте для кошек:\n" +
                 "Адрес: ...\n" +
                 "Телефон: ...\n" +
                 "Email: ...";
@@ -97,7 +105,7 @@ public class MessageService {
         SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь");
 
         Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new String[]{"Узнать информацию о приюте",
+                new String[]{"Узнать информацию о приюте для кошек",
                 "Как взять животное из приюта"},
                 new String[]{"Прислать отчет о питомце",
                 "Позвать волонтера"})
@@ -113,7 +121,7 @@ public class MessageService {
         SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь");
 
         Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new String[]{"Узнать информацию о приюте",
+                new String[]{"Узнать информацию о приюте для собак",
                         "Как взять животное из приюта"},
                 new String[]{"Прислать отчет о питомце",
                         "Позвать волонтера"})
@@ -130,7 +138,8 @@ public class MessageService {
     public void sendMessageHelpingVolunteers(long chatId, String firstName, String userName) {
         String helpingVolunteers =
                 "К сожалению, я не могу найти ответ на Ваш запрос. Бегу за волонтёром! " +
-                        "Не волнуйтесь, с Вами свяжутся в ближайшее время!";
+                        "Не волнуйтесь, с Вами свяжутся в ближайшее время! " +
+                        "Чтобы продолжить работу, введите команду /start";
         SendMessage message = new SendMessage(chatId, helpingVolunteers);
         telegramBot.execute(message);
         logger.warn(firstName + " (" + userName + ")" + " просит Вас связаться с ним!");

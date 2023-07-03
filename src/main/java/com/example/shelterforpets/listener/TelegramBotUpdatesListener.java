@@ -42,38 +42,44 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 logger.info("Processing update: {}", update);
                 String userName = update.message().chat().username();
                 String firstName = update.message().chat().firstName();
+                long chatId = update.message().chat().id();
+                String message = update.message().text();
                 if (update.message().text() == null) {
                     logger.warn("Skip message because text is null");
                     return;
                 }
                 // Process your updates here
-                if (update.message().text().equals("/start")) {
-                    long chatId = update.message().chat().id();
+                if (message.equals("/start")) {
                     messageService.sendWelcomeMessage(chatId);
-
-                } else if (update.message().text().equals("Приют для собак")) {
-                    long chatId = update.message().chat().id();
-                    messageService.sendDogShelterMenu(chatId);
-                } else if (update.message().text().equals("Приют для кошек")) {
-                    long chatId = update.message().chat().id();
+                } else if (message.equals("Приют для кошек")) {
                     messageService.sendCatShelterMenu(chatId);
-                } else if (update.message().text().equals("Узнать информацию о приюте")) {
-                    long chatId = update.message().chat().id();
-                    messageService.sendShelterInfo(chatId);
-                } else if (update.message().text().equals("Как взять животное из приюта")) {
-                    long chatId = update.message().chat().id();
+                } else if (message.equals("Приют для собак")) {
+                    messageService.sendDogShelterMenu(chatId);
+                } else if (message.equals("Узнать информацию о приюте для собак")) {
+                    messageService.sendDogShelterInfo(chatId);
+                } else if (message.equals("Узнать информацию о приюте для кошек")) {
+                    messageService.sendCatShelterInfo(chatId);
+                } else if (message.equals("Как взять животное из приюта")) {
                     messageService.sendAnimalAdoptionInstructions(chatId);
-                } else if (update.message().text().equals("Прислать отчет о питомце")) {
-                    long chatId = update.message().chat().id();
+                } else if (message.equals("Прислать отчет о питомце")) {
                     messageService.sendPetReport(chatId);
 
                 } else {
-                    messageService.sendMessageHelpingVolunteers(update.message().chat().id(), firstName, userName);
+                    messageService.sendMessageHelpingVolunteers(chatId, firstName, userName);
                 }
             });
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
+    }
+
+
+    private void changeShelter(Update update, long chatId) {
+        if (update.message().text().equals("Узнать информацию о приюте для собак")) {
+            messageService.sendDogShelterInfo(chatId);
+        } else if (update.message().text().equals("Узнать информацию о приюте для кошек")) {
+            messageService.sendCatShelterInfo(chatId);
+        }
     }
 }
