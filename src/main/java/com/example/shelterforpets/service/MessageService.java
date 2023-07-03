@@ -64,6 +64,68 @@ public class MessageService {
         telegramBot.execute(message);
     }
 
+
+    public void sendShelterInfo(long chatId) {
+        String shelterInfoText = "Информация о приюте:\n" +
+                "Адрес: ...\n" +
+                "Телефон: ...\n" +
+                "Email: ...";
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    public void sendAnimalAdoptionInstructions(long chatId) {
+        String adoptionInstructionsText = "Как взять животное из приюта:\n" +
+                "1. Заполните анкету на сайте приюта.\n" +
+                "2. Пройдите собеседование с сотрудниками приюта.\n" +
+                "3. Заключите договор о передаче животного.\n" +
+                "4. Оплатите взнос.";
+        sendNotification(chatId, adoptionInstructionsText);
+    }
+
+    public void sendPetReport(long chatId) {
+        String petReportText = "Прислать отчет о питомце:\n" +
+                "Для отправки отчета, пожалуйста, заполните форму на нашем сайте.";
+        sendNotification(chatId, petReportText);
+    }
+
+    private void sendNotification(long chatId, String text) {
+        SendMessage message = new SendMessage(chatId, text);
+        telegramBot.execute(message);
+    }
+
+    public void sendCatShelterMenu(long chatId) {
+        SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь");
+
+        Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                new String[]{"Узнать информацию о приюте",
+                "Как взять животное из приюта"},
+                new String[]{"Прислать отчет о питомце",
+                "Позвать волонтера"})
+                .oneTimeKeyboard(true)   // optional
+                .resizeKeyboard(true)    // optional
+                .selective(true);        // optional
+        message.replyMarkup(replyKeyboardMarkup);
+
+        telegramBot.execute(message);
+    }
+
+    public void sendDogShelterMenu(long chatId) {
+        SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь");
+
+        Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                new String[]{"Узнать информацию о приюте",
+                        "Как взять животное из приюта"},
+                new String[]{"Прислать отчет о питомце",
+                        "Позвать волонтера"})
+                .oneTimeKeyboard(true)   // optional
+                .resizeKeyboard(true)    // optional
+                .selective(true);        // optional
+        message.replyMarkup(replyKeyboardMarkup);
+
+        telegramBot.execute(message);
+    }
+
+
     //создаем метод, который не смог определить запрос пользователя и через лог вызываем волонтера
     public void sendMessageHelpingVolunteers(long chatId, String firstName, String userName) {
         String helpingVolunteers =
@@ -73,5 +135,7 @@ public class MessageService {
         telegramBot.execute(message);
         logger.warn(firstName + " (" + userName + ")" + " просит Вас связаться с ним!");
     }
+
+
 
 }
