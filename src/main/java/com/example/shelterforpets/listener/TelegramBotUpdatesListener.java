@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.TelegramException;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,9 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Service
-public class TelegramBotUpdatesListener implements UpdatesListener {
 
+public class TelegramBotUpdatesListener implements UpdatesListener {
+    // создаем поле логгер для передачи логов в консоль
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
     private final TelegramBot telegramBot;
@@ -48,6 +50,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (update.message().text().equals("/start")) {
                     long chatId = update.message().chat().id();
                     messageService.sendWelcomeMessage(chatId);
+
                 } else if (update.message().text().equals("Приют для собак")) {
                     long chatId = update.message().chat().id();
                     messageService.sendDogShelterMenu(chatId);
@@ -63,6 +66,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 } else if (update.message().text().equals("Прислать отчет о питомце")) {
                     long chatId = update.message().chat().id();
                     messageService.sendPetReport(chatId);
+
                 } else {
                     messageService.sendMessageHelpingVolunteers(update.message().chat().id(), firstName, userName);
                 }
