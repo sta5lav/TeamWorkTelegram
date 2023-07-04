@@ -2,18 +2,13 @@ package com.example.shelterforpets.listener;
 
 import com.example.shelterforpets.service.MessageService;
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.TelegramException;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -35,6 +30,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         telegramBot.setUpdatesListener(this);
     }
 
+    /**
+     * Processes the updates received from the Telegram Bot API.
+     *
+     * @param updates The list of updates to process.
+     * @return The status of the updates processing.
+     */
     @Override
     public int process(List<Update> updates) {
         try {
@@ -74,12 +75,4 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
-
-    private void changeShelter(Update update, long chatId) {
-        if (update.message().text().equals("Узнать информацию о приюте для собак")) {
-            messageService.sendDogShelterInfo(chatId);
-        } else if (update.message().text().equals("Узнать информацию о приюте для кошек")) {
-            messageService.sendCatShelterInfo(chatId);
-        }
-    }
 }

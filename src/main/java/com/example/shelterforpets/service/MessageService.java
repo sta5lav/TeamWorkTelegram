@@ -19,38 +19,54 @@ public class MessageService {
     // создаем поле для передачи логов в консоль
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    //инжектим класс телеграм бота из библиотеки
+    // Инжектим класс телеграм бота из библиотеки
     private TelegramBot telegramBot;
 
     // Инжектим репозиторий для клиентов приюта для кошек
-    @Autowired
-    CatShelterClientRepository catShelterClientRepository;
+    private CatShelterClientRepository catShelterClientRepository;
 
     // Инжектим репозиторий для клиентов приюта для собак
-    @Autowired
-    DogShelterClientRepository dogShelterClientRepository;
+    private DogShelterClientRepository dogShelterClientRepository;
 
     // Инжектим репозиторий для отчетов клиентов приюта для кошек
-    @Autowired
-    CatReportsRepository catReportsRepository;
+    private CatReportsRepository catReportsRepository;
 
     // Инжектим репозиторий для отчетов клиентов приюта для собак
-    @Autowired
-    DogReportsRepository dogReportsRepository;
+    private DogReportsRepository dogReportsRepository;
 
 
-    // Конструктор для телеграмбота
-    public MessageService(TelegramBot telegramBot) {
+    // Конструктор для телеграмбота и репозиториев
+    public MessageService(TelegramBot telegramBot, CatShelterClientRepository catShelterClientRepository,
+                          DogShelterClientRepository dogShelterClientRepository,
+                          CatReportsRepository catReportsRepository,
+                          DogReportsRepository dogReportsRepository) {
         this.telegramBot = telegramBot;
+        this.catShelterClientRepository = catShelterClientRepository;
+        this.dogShelterClientRepository = dogShelterClientRepository;
+        this.catReportsRepository = catReportsRepository;
+        this.dogReportsRepository = dogReportsRepository;
     }
 
     //создаем метод для приветственного сообщения с выбором приюта
+
+    /**
+     * Sends a welcome message to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the message to.
+     */
     public void sendWelcomeMessage(long chatId) {
         String welcomeText = "Привет! Я бот, и я готов помочь Вам. Какой приют Вас интересует?";
         sendShelterMenu(chatId, welcomeText);
     }
 
     //создаем метод для выбора приюта для клиентов
+
+    /**
+     * Sends a shelter menu message with the specified text to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the message to.
+     * @param text The text of the menu message.
+     */
     private void sendShelterMenu(long chatId, String text) {
         SendMessage message = new SendMessage(chatId, text);
 
@@ -64,15 +80,32 @@ public class MessageService {
         telegramBot.execute(message);
     }
 
+    /**
+     * Sends a cat shelter menu message to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the message to.
+     */
+    public void sendCatShelterMenu(long chatId) {
+        SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь");
 
-    public void sendDogShelterInfo(long chatId) {
-        String shelterInfoText = "Информация о приюте для собак:\n" +
-                "Адрес: ...\n" +
-                "Телефон: ...\n" +
-                "Email: ...";
-        sendNotification(chatId, shelterInfoText);
+        Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                new String[]{"Узнать информацию о приюте для кошек",
+                        "Как взять животное из приюта"},
+                new String[]{"Прислать отчет о питомце",
+                        "Позвать волонтера"})
+                .oneTimeKeyboard(false)   // optional
+                .resizeKeyboard(true)    // optional
+                .selective(true);        // optional
+        message.replyMarkup(replyKeyboardMarkup);
+
+        telegramBot.execute(message);
     }
 
+    /**
+     * Sends cat shelter information to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the message to.
+     */
     public void sendCatShelterInfo(long chatId) {
         String shelterInfoText = "Информация о приюте для кошек:\n" +
                 "Адрес: ...\n" +
@@ -81,6 +114,45 @@ public class MessageService {
         sendNotification(chatId, shelterInfoText);
     }
 
+    /**
+     * Sends a dog shelter menu message to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the message to.
+     */
+    public void sendDogShelterMenu(long chatId) {
+        SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь");
+
+        Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                new String[]{"Узнать информацию о приюте для собак",
+                        "Как взять животное из приюта"},
+                new String[]{"Прислать отчет о питомце",
+                        "Позвать волонтера"})
+                .oneTimeKeyboard(false)   // optional
+                .resizeKeyboard(true)    // optional
+                .selective(true);        // optional
+        message.replyMarkup(replyKeyboardMarkup);
+
+        telegramBot.execute(message);
+    }
+
+    /**
+     * Sends dog shelter information to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the message to.
+     */
+    public void sendDogShelterInfo(long chatId) {
+        String shelterInfoText = "Информация о приюте для собак:\n" +
+                "Адрес: ...\n" +
+                "Телефон: ...\n" +
+                "Email: ...";
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    /**
+     * Sends animal adoption instructions to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the instructions to.
+     */
     public void sendAnimalAdoptionInstructions(long chatId) {
         String adoptionInstructionsText = "Как взять животное из приюта:\n" +
                 "1. Заполните анкету на сайте приюта.\n" +
@@ -90,61 +162,45 @@ public class MessageService {
         sendNotification(chatId, adoptionInstructionsText);
     }
 
+    /**
+     * Sends a pet report notification to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the pet report notification to.
+     */
     public void sendPetReport(long chatId) {
         String petReportText = "Прислать отчет о питомце:\n" +
                 "Для отправки отчета, пожалуйста, заполните форму на нашем сайте.";
         sendNotification(chatId, petReportText);
     }
 
+    //создаем метод, который не смог определить запрос пользователя и через лог вызываем волонтера
+    /**
+     * Sends a message to the chat ID indicating that a volunteer will assist the user and provides a shelter menu.
+     * It also logs a warning message with the user's first name and username.
+     *
+     * @param chatId    The ID of the chat to send the message to.
+     * @param firstName The first name of the user.
+     * @param userName  The username of the user.
+     */
+    public void sendMessageHelpingVolunteers(long chatId, String firstName, String userName) {
+        String helpingVolunteers =
+                "К сожалению, я не могу найти ответ на Ваш запрос. Бегу за волонтёром! " +
+                        "Не волнуйтесь, с Вами свяжутся в ближайшее время! ";
+        SendMessage message = new SendMessage(chatId, helpingVolunteers);
+        telegramBot.execute(message);
+        sendShelterMenu(chatId, "Какой приют Вас интересует?");
+        logger.warn(firstName + " (" + userName + ")" + " просит Вас связаться с ним!");
+    }
+
+    /**
+     * Sends a notification message to the specified chat ID using the given text.
+     *
+     * @param chatId The ID of the chat to send the notification to.
+     * @param text   The text of the notification message.
+     */
     private void sendNotification(long chatId, String text) {
         SendMessage message = new SendMessage(chatId, text);
         telegramBot.execute(message);
     }
-
-    public void sendCatShelterMenu(long chatId) {
-        SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь");
-
-        Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new String[]{"Узнать информацию о приюте для кошек",
-                "Как взять животное из приюта"},
-                new String[]{"Прислать отчет о питомце",
-                "Позвать волонтера"})
-                .oneTimeKeyboard(true)   // optional
-                .resizeKeyboard(true)    // optional
-                .selective(true);        // optional
-        message.replyMarkup(replyKeyboardMarkup);
-
-        telegramBot.execute(message);
-    }
-
-    public void sendDogShelterMenu(long chatId) {
-        SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь");
-
-        Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new String[]{"Узнать информацию о приюте для собак",
-                        "Как взять животное из приюта"},
-                new String[]{"Прислать отчет о питомце",
-                        "Позвать волонтера"})
-                .oneTimeKeyboard(true)   // optional
-                .resizeKeyboard(true)    // optional
-                .selective(true);        // optional
-        message.replyMarkup(replyKeyboardMarkup);
-
-        telegramBot.execute(message);
-    }
-
-
-    //создаем метод, который не смог определить запрос пользователя и через лог вызываем волонтера
-    public void sendMessageHelpingVolunteers(long chatId, String firstName, String userName) {
-        String helpingVolunteers =
-                "К сожалению, я не могу найти ответ на Ваш запрос. Бегу за волонтёром! " +
-                        "Не волнуйтесь, с Вами свяжутся в ближайшее время! " +
-                        "Чтобы продолжить работу, введите команду /start";
-        SendMessage message = new SendMessage(chatId, helpingVolunteers);
-        telegramBot.execute(message);
-        logger.warn(firstName + " (" + userName + ")" + " просит Вас связаться с ним!");
-    }
-
-
 
 }
