@@ -1,15 +1,19 @@
 package com.example.shelterforpets.listener;
 
 import com.example.shelterforpets.service.MessageService;
+import com.example.shelterforpets.service.firstStage.FirstStageService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 
@@ -17,12 +21,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     // создаем поле логгер для передачи логов в консоль
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
+    private static final Pattern PATTERN = Pattern.compile("(\\d+) ([А-я\\d.,!?:\\s]+)");
+
     private final TelegramBot telegramBot;
     private final MessageService messageService;
+    private final FirstStageService firstStageService;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, MessageService messageService) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot,
+                                      MessageService messageService,
+                                      FirstStageService firstStageService) {
         this.telegramBot = telegramBot;
         this.messageService = messageService;
+        this.firstStageService = firstStageService;
     }
 
     @PostConstruct
@@ -52,18 +62,26 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 // Process your updates here
                 if (message.equals("/start")) {
                     messageService.sendWelcomeMessage(chatId);
+                //выбор приюта
                 } else if (message.equals("Приют для кошек")) {
-                    messageService.sendCatShelterMenu(chatId);
+                    messageService.sendInfoShelterMenu(chatId);
+                    firstStageService.saveCatShelterForClient(chatId, "catShelterMenu");
                 } else if (message.equals("Приют для собак")) {
-                    messageService.sendDogShelterMenu(chatId);
-                } else if (message.equals("Узнать информацию о приюте для собак")) {
-                    messageService.sendDogShelterInfo(chatId);
-                } else if (message.equals("Узнать информацию о приюте для кошек")) {
-                    messageService.sendCatShelterInfo(chatId);
+                    messageService.sendInfoShelterMenu(chatId);
+                    firstStageService.saveDogShelterForClient(chatId, "dogShelterMenu");
+                } else if (message.equals("Узнать информацию о приюте") ||
+                        message.equals("Вернуться в меню информации о приюте")) {
+                    firstStageService.infoShelterMenu(chatId);
+                } else if (firstStageService.getStepDogClient(chatId).equals("dogShelterMenu")) {
+                    dogShelterMenu(update);
+                } else if (firstStageService.getStepCatClient(chatId).equals("catShelterMenu")) {
+                    catShelterMenu(update);
+
                 } else if (message.equals("Как взять животное из приюта")) {
                     messageService.sendAnimalAdoptionInstructions(chatId);
                 } else if (message.equals("Прислать отчет о питомце")) {
                     messageService.sendPetReport(chatId);
+
 
                 } else {
                     messageService.sendMessageHelpingVolunteers(chatId, firstName, userName);
@@ -75,4 +93,55 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
+    //Методы для работы с меню информации о приюте
+    private void catShelterMenu(Update update) {
+        long chatId = update.message().chat().id();
+        String message = update.message().text();
+        Matcher matcher;
+
+        if (message.equals("/info")) {
+            firstStageService.sendCatShelterInfo(chatId);
+        } else if (message.equals("/go")) {
+            firstStageService.scheduleCatShelter(chatId);
+        } else if (message.equals("/securityDetails")) {
+            firstStageService.securityContactDetailsCatShelter(chatId);
+        } else if (message.equals("/tb")) {
+            firstStageService.recommendationInTheCatShelter(chatId);
+        } else if (message.equals("/saveMyClientCard")) {
+            firstStageService.saveClientInCatShelter(chatId);
+        } else if (message.equals("/volunteer")) {
+            firstStageService.getHelpingCatShelterVolunteers(chatId);
+        } else if (message != null && (matcher = PATTERN.matcher(message)).matches()) {
+            String phoneNumber = matcher.group(1);
+            String name = matcher.group(2);
+            firstStageService.saveCatShelterClientNameAndPhoneNumber(chatId, name, phoneNumber);
+            SendMessage sendMessage = new SendMessage(chatId, "Ваши данные успешно сохранены!");
+            telegramBot.execute(sendMessage);
+        }
+    }
+
+    private void dogShelterMenu(Update update) {
+        long chatId = update.message().chat().id();
+        String message = update.message().text();
+        Matcher matcher;
+        if (message.equals("/info")) {
+            firstStageService.sendDogShelterInfo(chatId);
+        } else if (message.equals("/go")) {
+            firstStageService.scheduleDogShelter(chatId);
+        } else if (message.equals("/securityDetails")) {
+            firstStageService.securityContactDetailsDogShelter(chatId);
+        } else if (message.equals("/tb")) {
+            firstStageService.recommendationInTheDogShelter(chatId);
+        } else if (message.equals("/saveMyClientCard")) {
+            firstStageService.saveClientInDogShelter(chatId);
+        } else if (message.equals("/volunteer")) {
+            firstStageService.getHelpingDogShelterVolunteers(chatId);
+        } else if (message != null && (matcher = PATTERN.matcher(message)).matches()) {
+            String phoneNumber = matcher.group(1);
+            String name = matcher.group(2);
+            firstStageService.saveDogShelterClientNameAndPhoneNumber(chatId, name, phoneNumber);
+            SendMessage sendMessage = new SendMessage(chatId, "Ваши данные успешно сохранены!");
+            telegramBot.execute(sendMessage);
+        }
+    }
 }

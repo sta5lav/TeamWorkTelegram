@@ -12,6 +12,9 @@
                 <tableExists tableName="dog_shelter_client"/>
                 <tableExists tableName="dog_report"/>
                 <tableExists tableName="cat_report"/>
+                <tableExists tableName="volunteer"/>
+                <tableExists tableName="clients"/>
+
             </not>
         </preConditions>
 
@@ -28,6 +31,8 @@
             </column>
             <column name="nicknamepet" type="TEXT">
             </column>
+            <column name="step" type="TEXT">
+            </column>
         </createTable>
 
         <createTable tableName="dog_shelter_client">
@@ -43,6 +48,9 @@
             </column>
             <column name="nicknamepet" type="TEXT">
             </column>
+            <column name="step" type="TEXT">
+            </column>
+
         </createTable>
 
         <createTable tableName="dog_report">
@@ -72,6 +80,32 @@
             </column>
             <column name="photopet" type="BYTEA">
                 <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="volunteer">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+            </column>
+            <column name="name" type="TEXT">
+            </column>
+            <column name="phonenumber" type="TEXT">
+            </column>
+        </createTable>
+
+        <createTable tableName="clients">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+            </column>
+            <column name="name" type="TEXT">
+            </column>
+            <column name="phonenumber" type="TEXT">
+            </column>
+            <column name="step" type="TEXT">
             </column>
         </createTable>
 

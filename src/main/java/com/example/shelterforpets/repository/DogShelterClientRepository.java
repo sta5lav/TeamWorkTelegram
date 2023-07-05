@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DogShelterClientRepository extends JpaRepository<DogShelterClient, Long> {
 
+    DogShelterClient findAllByUserId(long chatId);
 
-
+    DogShelterClient findAllByStep(String step);
 
 }
