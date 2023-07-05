@@ -65,10 +65,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 //выбор приюта
                 } else if (message.equals("Приют для кошек")) {
                     messageService.sendInfoShelterMenu(chatId);
-                    firstStageService.saveCatShelterForClient(chatId, "catShelterMenu");
+                    firstStageService.saveClient(chatId, "catShelterMenu");
                 } else if (message.equals("Приют для собак")) {
                     messageService.sendInfoShelterMenu(chatId);
-                    firstStageService.saveDogShelterForClient(chatId, "dogShelterMenu");
+                    firstStageService.saveClient(chatId, "dogShelterMenu");
                 } else if (message.equals("Узнать информацию о приюте") ||
                         message.equals("Вернуться в меню информации о приюте")) {
                     firstStageService.infoShelterMenu(chatId);
@@ -107,7 +107,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             firstStageService.securityContactDetailsCatShelter(chatId);
         } else if (message.equals("Выдать общие рекомендации о технике безопасности на территории приюта")) {
             firstStageService.recommendationInTheCatShelter(chatId);
-        }  else if (message.equals("Принять и записать контактные данные для связи.")) {
+        }  else if (message.equals("Принять и записать контактные данные для связи")) {
             firstStageService.saveClientInCatShelter(chatId);
         } else if (message.equals("Позвать волонтера")) {
             firstStageService.getHelpingCatShelterVolunteers(chatId);
@@ -124,17 +124,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         long chatId = update.message().chat().id();
         String message = update.message().text();
         Matcher matcher;
-        if (message.equals("/info")) {
+        if (message.equals("Рассказать о приюте")) {
             firstStageService.sendDogShelterInfo(chatId);
-        } else if (message.equals("/go")) {
+        } else if (message.equals("Выдать расписание работы приюта и адрес, схему проезда")) {
             firstStageService.scheduleDogShelter(chatId);
-        } else if (message.equals("/securityDetails")) {
+        } else if (message.equals("Выдать контактные данные охраны для оформления пропуска на машину")) {
             firstStageService.securityContactDetailsDogShelter(chatId);
-        } else if (message.equals("/tb")) {
+        } else if (message.equals("Выдать общие рекомендации о технике безопасности на территории приюта")) {
             firstStageService.recommendationInTheDogShelter(chatId);
-        } else if (message.equals("/saveMyClientCard")) {
+        } else if (message.equals("Принять и записать контактные данные для связи")) {
             firstStageService.saveClientInDogShelter(chatId);
-        } else if (message.equals("/volunteer")) {
+        } else if (message.equals("Позвать волонтера")) {
             firstStageService.getHelpingDogShelterVolunteers(chatId);
         } else if (message != null && (matcher = PATTERN.matcher(message)).matches()) {
             String phoneNumber = matcher.group(1);

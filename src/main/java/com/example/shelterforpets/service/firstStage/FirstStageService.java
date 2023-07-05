@@ -1,9 +1,7 @@
 package com.example.shelterforpets.service.firstStage;
 
 
-import com.example.shelterforpets.entity.CatShelterClient;
 import com.example.shelterforpets.entity.Client;
-import com.example.shelterforpets.entity.DogShelterClient;
 import com.example.shelterforpets.listener.TelegramBotUpdatesListener;
 import com.example.shelterforpets.repository.*;
 import com.pengrad.telegrambot.TelegramBot;
@@ -120,7 +118,6 @@ public class FirstStageService {
     }
 
     //Вывод расписания приюта для собак
-
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -138,7 +135,6 @@ public class FirstStageService {
     }
 
     //Вывод контактных данных охраны для оформления пропуска на машину в приют для кошек
-
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -156,7 +152,6 @@ public class FirstStageService {
     }
 
     //Вывод контактных данных охраны для оформления пропуска на машину в приют для собак
-
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -172,7 +167,6 @@ public class FirstStageService {
     }
 
     //Вывод общих рекомендаций о технике безопасности на территории приюта для кошек
-
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -188,7 +182,6 @@ public class FirstStageService {
     }
 
     //Вывод общих рекомендаций о технике безопасности на территории приюта для собак
-
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -204,7 +197,6 @@ public class FirstStageService {
     }
 
     //Сохранение контактных данных для связи с клиентом
-
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -257,7 +249,6 @@ public class FirstStageService {
 
 
     //Позвать волонтера приюта для кошек
-
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -281,7 +272,6 @@ public class FirstStageService {
     }
 
     //Позвать волонтера приюта для собак
-
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -321,14 +311,15 @@ public class FirstStageService {
         telegramBot.execute(message);
     }
 
+    //сохранение клиента в базу данных
     /**
      * Sends a notification message to the specified chat ID using the given text.
      *
      * @param chatId      The ID of the chat to send the notification to.
      * @param menuShelter The text of the notification message.
      */
-    public void saveCatShelterForClient(long chatId, String menuShelter) {
-        if (clientRepository.findAllByUserId(chatId) == null) {
+    public void saveClient(long chatId, String menuShelter) {
+        if (!clientRepository.existsAllByUserId(chatId)) {
             Client client = new Client();
             client.setUserId(chatId);
             client.setStep(menuShelter);
@@ -338,24 +329,7 @@ public class FirstStageService {
         }
     }
 
-    /**
-     * Sends a notification message to the specified chat ID using the given text.
-     *
-     * @param chatId      The ID of the chat to send the notification to.
-     * @param menuShelter The text of the notification message.
-     */
-    public void saveDogShelterForClient(long chatId, String menuShelter) {
-        if (clientRepository.findAllByUserId(chatId) == null) {
-            Client client = new Client();
-            client.setUserId(chatId);
-            client.setStep(menuShelter);
-            clientRepository.save(client);
-        } else {
-            clientRepository.findAllByUserId(chatId).setStep(menuShelter);
-        }
-
-    }
-
+    //получить данные к какому меню приюта обратился пользователь
     /**
      * Sends a notification message to the specified chat ID using the given text.
      *
