@@ -51,14 +51,20 @@ public class FirstStageService {
      * @param chatId The ID of the chat to send the message to.
      */
     public void infoShelterMenu(long chatId) {
-        SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь: \n " +
-                "1. Рассказать о приюте. нажмите /info \n " +
-                "2. Выдать расписание работы приюта и адрес, схему проезда. нажмите /go \n " +
-                "3. Выдать контактные данные охраны для оформления пропуска на машину. нажмите /securityDetails \n " +
-                "4. Выдать общие рекомендации о технике безопасности на территории приюта. /tb \n " +
-                "5. Принять и записать контактные данные для связи. /saveMyClientCard \n " +
-                "6. Позвать волонтера. нажмите /volunteer");
+        SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь");
+        Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                new String[]{"Рассказать о приюте"},
+                new String[]{"Выдать расписание работы приюта и адрес, схему проезда"},
+                new String[]{"Выдать контактные данные охраны для оформления пропуска на машину"},
+                new String[]{"Выдать общие рекомендации о технике безопасности на территории приюта"},
+                new String[]{"Принять и записать контактные данные для связи"},
+                new String[]{"Позвать волонтера"})
+                .oneTimeKeyboard(true)   // optional
+                .resizeKeyboard(true)    // optional
+                .selective(true);        // optional
+        message.replyMarkup(replyKeyboardMarkup);
         telegramBot.execute(message);
+
     }
 
     //Информация о приюте для кошек
@@ -350,12 +356,12 @@ public class FirstStageService {
 
     }
 
-
-    public String getStepCatClient(long chatId) {
-        return clientRepository.findAllByUserId(chatId).getStep();
-    }
-
-    public String getStepDogClient(long chatId) {
+    /**
+     * Sends a notification message to the specified chat ID using the given text.
+     *
+     * @param chatId      The ID of the chat to send the notification to.
+     */
+    public String getStepClient(long chatId) {
         return clientRepository.findAllByUserId(chatId).getStep();
     }
 

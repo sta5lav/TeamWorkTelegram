@@ -72,9 +72,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 } else if (message.equals("Узнать информацию о приюте") ||
                         message.equals("Вернуться в меню информации о приюте")) {
                     firstStageService.infoShelterMenu(chatId);
-                } else if (firstStageService.getStepDogClient(chatId).equals("dogShelterMenu")) {
+                } else if (firstStageService.getStepClient(chatId).equals("dogShelterMenu")) {
                     dogShelterMenu(update);
-                } else if (firstStageService.getStepCatClient(chatId).equals("catShelterMenu")) {
+                } else if (firstStageService.getStepClient(chatId).equals("catShelterMenu")) {
                     catShelterMenu(update);
 
                 } else if (message.equals("Как взять животное из приюта")) {
@@ -99,17 +99,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         String message = update.message().text();
         Matcher matcher;
 
-        if (message.equals("/info")) {
+        if (message.equals("Рассказать о приюте")) {
             firstStageService.sendCatShelterInfo(chatId);
-        } else if (message.equals("/go")) {
+        } else if (message.equals("Выдать расписание работы приюта и адрес, схему проезда")) {
             firstStageService.scheduleCatShelter(chatId);
-        } else if (message.equals("/securityDetails")) {
+        } else if (message.equals("Выдать контактные данные охраны для оформления пропуска на машину")) {
             firstStageService.securityContactDetailsCatShelter(chatId);
-        } else if (message.equals("/tb")) {
+        } else if (message.equals("Выдать общие рекомендации о технике безопасности на территории приюта")) {
             firstStageService.recommendationInTheCatShelter(chatId);
-        } else if (message.equals("/saveMyClientCard")) {
+        }  else if (message.equals("Принять и записать контактные данные для связи.")) {
             firstStageService.saveClientInCatShelter(chatId);
-        } else if (message.equals("/volunteer")) {
+        } else if (message.equals("Позвать волонтера")) {
             firstStageService.getHelpingCatShelterVolunteers(chatId);
         } else if (message != null && (matcher = PATTERN.matcher(message)).matches()) {
             String phoneNumber = matcher.group(1);
