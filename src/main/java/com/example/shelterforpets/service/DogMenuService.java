@@ -37,7 +37,7 @@ public class DogMenuService {
                 dogShelterService.dogAdoptionInstructions(chatId);
                 break;
             case "Прислать отчет о питомце":
-                dogShelterService.Report(chatId);
+                dogShelterService.report(chatId);
                 break;
             default:
                 dogShelterService.messageHelpingVolunteers(chatId, firstName, userName);

@@ -152,13 +152,6 @@ public class CatShelterService {
         catShelterClientRepository.save(client);
     }
 
-
-
-
-
-
-
-
     /**
      * Sends a notification message to the specified chat ID using the given text.
      *

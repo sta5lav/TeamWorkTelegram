@@ -43,7 +43,7 @@ public class DogShelterService {
         shelterService.sendAnimalAdoptionInstructions(chatId);
     }
 
-    public void Report(long chatId) {
+    public void report(long chatId) {
         shelterService.sendPetReport(chatId);
     }
 
