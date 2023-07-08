@@ -31,8 +31,6 @@
             </column>
             <column name="nicknamepet" type="TEXT">
             </column>
-            <column name="step" type="TEXT">
-            </column>
         </createTable>
 
         <createTable tableName="dog_shelter_client">
@@ -48,9 +46,6 @@
             </column>
             <column name="nicknamepet" type="TEXT">
             </column>
-            <column name="step" type="TEXT">
-            </column>
-
         </createTable>
 
         <createTable tableName="dog_report">
@@ -100,10 +95,6 @@
                 <constraints primaryKey="true"/>
             </column>
             <column name="user_id" type="BIGINT">
-            </column>
-            <column name="name" type="TEXT">
-            </column>
-            <column name="phonenumber" type="TEXT">
             </column>
             <column name="step" type="TEXT">
             </column>

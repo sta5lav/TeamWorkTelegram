@@ -1,59 +1,148 @@
 package com.example.shelterforpets.service;
 
+
 import com.example.shelterforpets.entity.CatShelterClient;
+import com.example.shelterforpets.entity.Client;
 import com.example.shelterforpets.entity.DogShelterClient;
+import com.example.shelterforpets.entity.Step;
 import com.example.shelterforpets.listener.TelegramBotUpdatesListener;
-import com.example.shelterforpets.repository.CatReportsRepository;
-import com.example.shelterforpets.repository.CatShelterClientRepository;
-import com.example.shelterforpets.repository.DogReportsRepository;
-import com.example.shelterforpets.repository.DogShelterClientRepository;
-import com.example.shelterforpets.service.firstStage.FirstStageService;
+import com.example.shelterforpets.repository.*;
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.request.*;
+import com.pengrad.telegrambot.model.request.Keyboard;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+
 @Service
-public class MessageService {
+public class ShelterService {
+
     // создаем поле для передачи логов в консоль
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
+
 
     // Инжектим класс телеграм бота из библиотеки
     private TelegramBot telegramBot;
 
-    private FirstStageService firstStageService;
-
-    // Инжектим репозиторий для клиентов приюта для кошек
+    // Инжектим репозитории для клиентов
+    private ClientRepository clientRepository;
+    private VolunteerRepository volunteerRepository;
     private CatShelterClientRepository catShelterClientRepository;
-
-    // Инжектим репозиторий для клиентов приюта для собак
     private DogShelterClientRepository dogShelterClientRepository;
 
-    // Инжектим репозиторий для отчетов клиентов приюта для кошек
-    private CatReportsRepository catReportsRepository;
-
-    // Инжектим репозиторий для отчетов клиентов приюта для собак
-    private DogReportsRepository dogReportsRepository;
-
-
     // Конструктор для телеграмбота и репозиториев
-    public MessageService(TelegramBot telegramBot, CatShelterClientRepository catShelterClientRepository,
-                          DogShelterClientRepository dogShelterClientRepository,
-                          CatReportsRepository catReportsRepository,
-                          DogReportsRepository dogReportsRepository,
-                          FirstStageService firstStageService) {
+    public ShelterService(TelegramBot telegramBot,
+                          ClientRepository clientRepository,
+                          VolunteerRepository volunteerRepository,
+                          CatShelterClientRepository catShelterClientRepository,
+                          DogShelterClientRepository dogShelterClientRepository) {
         this.telegramBot = telegramBot;
+        this.clientRepository = clientRepository;
+        this.volunteerRepository = volunteerRepository;
         this.catShelterClientRepository = catShelterClientRepository;
         this.dogShelterClientRepository = dogShelterClientRepository;
-        this.catReportsRepository = catReportsRepository;
-        this.dogReportsRepository = dogReportsRepository;
-        this.firstStageService = firstStageService;
+    }
+
+    /**
+     * Sends a dog shelter menu message to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the message to.
+     */
+    public void infoShelterMenu(long chatId) {
+        SendMessage message = new SendMessage(chatId, "Что вас интересует?");
+        Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                new String[]{"О приюте"},
+                new String[]{"Расписание работы приюта и адрес, схема проезда"},
+                new String[]{"Контактные данные охраны для оформления пропуска на машину"},
+                new String[]{"Общие рекомендации о технике безопасности на территории приюта"},
+                new String[]{"Принять и записать контактные данные для связи"},
+                new String[]{"Позвать волонтера"},
+                new String[]{"Вернуться в меню приюта"})
+                .oneTimeKeyboard(false)   // optional
+                .resizeKeyboard(true)    // optional
+                .selective(true);        // optional
+        message.replyMarkup(replyKeyboardMarkup);
+        telegramBot.execute(message);
+
+    }
+
+    //Сохранение контактных данных для связи с клиентом
+    /**
+     * Sends cat shelter information to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the message to.
+     */
+    public void saveClientInCatShelter(long chatId) {
+        if (!catShelterClientRepository.existsAllByUserId(chatId)) {
+            CatShelterClient client = new CatShelterClient();
+            client.setUserId(chatId);
+            catShelterClientRepository.save(client);
+        }
+    }
+
+    /**
+     * Sends cat shelter information to the specified chat ID.
+     *
+     * @param chatId The ID of the chat to send the message to.
+     */
+    public void saveClientInDogShelter(long chatId) {
+        if (!dogShelterClientRepository.existsAllByUserId(chatId)) {
+            DogShelterClient client = new DogShelterClient();
+            client.setUserId(chatId);
+            dogShelterClientRepository.save(client);
+        }
+    }
+
+    public void sendNameAndPhoneNumberPattern(long chatId) {
+        String saveClient = "Введите контактные данные в формате:\n" +
+                "89991234567 ИМЯ";
+        sendNotification(chatId, saveClient);
+    }
+
+    /**
+     * Sends a notification message to the specified chat ID using the given text.
+     *
+     * @param chatId The ID of the chat to send the notification to.
+     * @param text   The text of the notification message.
+     */
+    private void sendNotification(long chatId, String text) {
+        SendMessage message = new SendMessage(chatId, text);
+        telegramBot.execute(message);
+    }
+
+    //сохранение клиента в базу данных
+    /**
+     * Sends a notification message to the specified chat ID using the given text.
+     *
+     * @param chatId      The ID of the chat to send the notification to.
+     * @param step The text of the notification message.
+     */
+    public void saveClient(long chatId, Step step) {
+        if (!clientRepository.existsAllByUserId(chatId)) {
+            Client client = new Client();
+            client.setUserId(chatId);
+            client.setStep(step);
+            clientRepository.save(client);
+        } else {
+            Client client = clientRepository.findAllByUserId(chatId);
+            client.setStep(step);
+            clientRepository.save(client);
+        }
+    }
+
+    //получить данные к какому меню приюта обратился пользователь
+    /**
+     * Sends a notification message to the specified chat ID using the given text.
+     *
+     * @param chatId      The ID of the chat to send the notification to.
+     */
+    public Step getStepClient(long chatId) {
+        return clientRepository.findAllByUserId(chatId).getStep();
     }
 
     //создаем метод для приветственного сообщения с выбором приюта
-
     /**
      * Sends a welcome message to the specified chat ID.
      *
@@ -65,7 +154,6 @@ public class MessageService {
     }
 
     //создаем метод для выбора приюта для клиентов
-
     /**
      * Sends a shelter menu message with the specified text to the specified chat ID.
      *
@@ -90,7 +178,7 @@ public class MessageService {
      * @param chatId The ID of the chat to send the message to.
      */
     public void sendInfoShelterMenu(long chatId) {
-        SendMessage message = new SendMessage(chatId, "Выбери, с каким запросом пришел пользователь:");
+        SendMessage message = new SendMessage(chatId, "Что вас интересует?");
         Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
                 new String[]{"Узнать информацию о приюте",
                         "Как взять животное из приюта"},
@@ -102,7 +190,6 @@ public class MessageService {
         message.replyMarkup(replyKeyboardMarkup);
         telegramBot.execute(message);
     }
-
 
     /**
      * Sends animal adoption instructions to the specified chat ID.
@@ -147,16 +234,4 @@ public class MessageService {
         sendShelterMenu(chatId, "Какой приют Вас интересует?");
         logger.warn(firstName + " (" + userName + ")" + " просит Вас связаться с ним!");
     }
-
-    /**
-     * Sends a notification message to the specified chat ID using the given text.
-     *
-     * @param chatId The ID of the chat to send the notification to.
-     * @param text   The text of the notification message.
-     */
-    private void sendNotification(long chatId, String text) {
-        SendMessage message = new SendMessage(chatId, text);
-        telegramBot.execute(message);
-    }
-
 }

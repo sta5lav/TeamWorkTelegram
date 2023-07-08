@@ -25,7 +25,4 @@ public class CatShelterClient {
     @Column(name = "nicknamepet", columnDefinition = "TEXT")
     private String nickNamePet;
 
-    @Column(name = "step", columnDefinition = "TEXT")
-    private String step;
-
 }

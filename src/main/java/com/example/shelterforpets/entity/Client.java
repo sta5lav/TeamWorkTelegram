@@ -17,12 +17,7 @@ public class Client {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(columnDefinition = "TEXT")
-    private String name;
-
-    @Column(name = "phonenumber", columnDefinition = "TEXT")
-    private String phoneNumber;
-
-    @Column(name = "step", columnDefinition = "TEXT")
-    private String step;
+    @Column(name = "step")
+    @Enumerated(EnumType.STRING)
+    private Step step;
 }

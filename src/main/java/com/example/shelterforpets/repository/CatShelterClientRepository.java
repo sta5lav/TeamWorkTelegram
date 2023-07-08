@@ -7,4 +7,5 @@ public interface CatShelterClientRepository extends JpaRepository<CatShelterClie
 
     CatShelterClient findAllByUserId(long chatId);
 
+    Boolean existsAllByUserId(long chatId);
 }
