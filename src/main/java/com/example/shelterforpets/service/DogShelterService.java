@@ -126,16 +126,16 @@ public class DogShelterService {
     public void getHelpingDogShelterVolunteers(long chatId) {
         Random rn = new Random();
         int answer = rn.nextInt(5) + 1;
-        volunteerRepository.findAllById(answer); //Добавил случайный выбор волонтера
+        volunteerRepository.findAllByUserId(answer); //Добавил случайный выбор волонтера
         SendMessage messageToVolunteer = new SendMessage(
-                volunteerRepository.findAllById(answer).getUserId(),
+                volunteerRepository.findAllByUserId(answer).getUserId(),
                 "С вами хочет связаться клиент: " +
                         clientRepository.findAllByUserId(chatId).getUserId());
         telegramBot.execute(messageToVolunteer);
         SendMessage message = new SendMessage(chatId,
                 "С Вами свяжется волонтер!" +
                         " Вы можете ему позвонить по указаному номеру телефона: " +
-                        volunteerRepository.findAllById(answer).getPhoneNumber());
+                        volunteerRepository.findAllByUserId(answer).getPhoneNumber());
         telegramBot.execute(message);
     }
 
@@ -153,11 +153,6 @@ public class DogShelterService {
         dogShelterClientRepository.save(client);
     }
 
-
-
-
-
-
     /**
      * Sends a notification message to the specified chat ID using the given text.
      *
@@ -168,4 +163,67 @@ public class DogShelterService {
         SendMessage message = new SendMessage(chatId, text);
         telegramBot.execute(message);
     }
+
+    /**
+     * Find client by id from cat shelter repository
+     * @param userId The ID of the user ID in repository
+     * @return String
+     */
+    public String findClientFromDogShelter(long userId) {
+        if (dogShelterClientRepository.findAllByUserId(userId).toString() == null) {
+            return "Клиента нет в базе данных!";
+        }
+        return dogShelterClientRepository.findAllByUserId(userId).toString();
+    }
+
+    /**
+     * Save new client in cat shelter repository
+     * @param userId The ID of the user ID in repository
+     * @param name The name of client
+     * @param phoneNumber The phone number of client
+     * @param nickNamePet The nickname pet of client
+     * @return String
+     */
+    public String postClientFromDogShelter(long userId,
+                                           String name,
+                                           String phoneNumber,
+                                           String nickNamePet) {
+        DogShelterClient dogShelterClient = new DogShelterClient();
+        dogShelterClient.setUserId(userId);
+        dogShelterClient.setName(name);
+        dogShelterClient.setPhoneNumber(phoneNumber);
+        dogShelterClient.setNickNamePet(nickNamePet);
+        dogShelterClientRepository.save(dogShelterClient);
+        return "Данные клента успешно добавлены в базу данных";
+    }
+
+
+    /**
+     * Edit client by id in cat shelter repository
+     * @param dogShelterClient The client from dog shelter
+     * @return String
+     */
+    public String putClientFromDogShelter(DogShelterClient dogShelterClient) {
+        Long userId = dogShelterClient.getUserId();
+        if (dogShelterClientRepository.existsAllByUserId(userId) != null) {
+            dogShelterClientRepository.save(dogShelterClient);
+            return "Данные клента успешно изменены в базе данных";
+        }
+        return "Клиент отсутствует в базе данных!";
+    }
+
+    /**
+     * Delete client by id in cat shelter repository
+     * @param userId The ID of the user ID in repository
+     * @return String
+     */
+    public String deleteClientFromDogShelter(long userId) {
+        if(dogShelterClientRepository.existsAllByUserId(userId)) {
+            dogShelterClientRepository.deleteById(userId);
+            return "Клиент успешно удален!";
+        }
+        return "Клиент отсутствует в базе данных!";
+    }
+
+
 }

@@ -7,7 +7,6 @@ import com.example.shelterforpets.repository.VolunteerRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Service;
-
 import java.util.Random;
 
 @Service
@@ -125,16 +124,16 @@ public class CatShelterService {
     public void getHelpingCatShelterVolunteers(long chatId) {
         Random rn = new Random();
         int answer = rn.nextInt(5) + 1;
-        volunteerRepository.findAllById(answer); //Добавил случайный выбор волонтера
+        volunteerRepository.findAllByUserId(answer); //Добавил случайный выбор волонтера
         SendMessage messageToVolunteer = new SendMessage(
-                volunteerRepository.findAllById(answer).getUserId(),
+                volunteerRepository.findAllByUserId(answer).getUserId(),
                 "С вами хочет связаться клиент: " +
                         clientRepository.findAllByUserId(chatId).getUserId());
         telegramBot.execute(messageToVolunteer);
         SendMessage message = new SendMessage(chatId,
                 "С Вами свяжется волонтер!" +
                         " Вы можете ему позвонить по указаному номеру телефона: " +
-                        volunteerRepository.findAllById(answer).getPhoneNumber());
+                        volunteerRepository.findAllByUserId(answer).getPhoneNumber());
         telegramBot.execute(message);
     }
 
@@ -162,5 +161,69 @@ public class CatShelterService {
         SendMessage message = new SendMessage(chatId, text);
         telegramBot.execute(message);
     }
+
+    /**
+     * Find client by id from cat shelter repository
+     * @param userId The ID of the user ID in repository
+     * @return String
+     */
+    public String findClientFromCatShelter(long userId) {
+        if (catShelterClientRepository.findAllByUserId(userId).toString() == null) {
+            return "Клиента нет в базе данных!";
+        }
+        return catShelterClientRepository.findAllByUserId(userId).toString();
+    }
+
+    /**
+     * Save new client in cat shelter repository
+     * @param userId The ID of the user ID in repository
+     * @param name The name of client
+     * @param phoneNumber The phone number of client
+     * @param nickNamePet The nickname pet of client
+     * @return String
+     */
+    public String postClientFromCatShelter(long userId,
+                                           String name,
+                                           String phoneNumber,
+                                           String nickNamePet) {
+        CatShelterClient catShelterClient = new CatShelterClient();
+        catShelterClient.setUserId(userId);
+        catShelterClient.setName(name);
+        catShelterClient.setPhoneNumber(phoneNumber);
+        catShelterClient.setNickNamePet(nickNamePet);
+        catShelterClientRepository.save(catShelterClient);
+        return "Данные клента успешно добавлены в базу данных";
+    }
+
+
+    /**
+     * Edit client by id in cat shelter repository
+     * @param catShelterClient The client from cat shelter
+     * @return String
+     */
+    public String putClientFromCatShelter(CatShelterClient catShelterClient) {
+        Long userId = catShelterClient.getUserId();
+        if (catShelterClientRepository.existsAllByUserId(userId) != null) {
+            catShelterClientRepository.save(catShelterClient);
+            return "Данные клента успешно изменены в базе данных";
+        }
+        return "Клиент отсутствует в базе данных!";
+    }
+
+    /**
+     * Delete client by id in cat shelter repository
+     * @param userId The ID of the user ID in repository
+     * @return String
+     */
+    public String deleteClientFromCatShelter(long userId) {
+        if(catShelterClientRepository.existsAllByUserId(userId)) {
+            catShelterClientRepository.deleteById(userId);
+            return "Клиент успешно удален!";
+        }
+        return "Клиент отсутствует в базе данных!";
+    }
+
+
+
 
 }

@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
 
-    Volunteer findAllById(long chatId);
+    Volunteer findAllByUserId(long chatId);
+
+    Boolean existsAllByUserId(long chatId);
 
 }
