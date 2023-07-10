@@ -1,5 +1,6 @@
 package com.example.shelterforpets.service;
 
+import com.example.shelterforpets.entity.CatShelterClient;
 import com.example.shelterforpets.entity.DogShelterClient;
 import com.example.shelterforpets.entity.Volunteer;
 import com.example.shelterforpets.repository.VolunteerRepository;
@@ -14,46 +15,50 @@ public class VolunteerService {
         this.volunteerRepository = volunteerRepository;
     }
 
-    public String findVolunteer(long userId) {
-        if (volunteerRepository.findAllByUserId(userId).toString() == null) {
-            return "Волонтера нет в базе данных!";
-        }
-        return volunteerRepository.findAllByUserId(userId).toString();
+    /**
+     * Find volunteer by id from volunteer repository
+     * @param userId The ID of the user ID in repository
+     * @return Object Volunteer
+     */
+    public Volunteer findVolunteer(long userId) {
+        return volunteerRepository
+                .findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Клиента нет в базе данных!"));
     }
 
-    public String postVolunteer(long userId,
-                                String name,
-                                String phoneNumber) {
-        Volunteer volunteer = new Volunteer();
-        volunteer.setUserId(userId);
-        volunteer.setName(name);
-        volunteer.setPhoneNumber(phoneNumber);
-        volunteerRepository.save(volunteer);
-        return "Данные волонтера успешно добавлены в базу данных";
+    /**
+     * Post volunteer by id from volunteer repository
+     * @param userId The ID of the user ID in repository
+     * @return Object Volunteer
+     */
+    public Volunteer postVolunteer(long userId, Volunteer volunteer) {
+        if (volunteerRepository.existsAllByUserId(userId) == null) {
+            volunteer.setUserId(userId);
+            return volunteerRepository.save(volunteer);
+        } return null;
     }
 
-    public String putVolunteer(Volunteer volunteer) {
-        Long userId = volunteer.getUserId();
+
+    /**
+     * Edit volunteer by id in volunteer repository
+     * @param volunteer The volunteer
+     * @return Object Volunteer
+     */
+    public Volunteer putVolunteer(long userId, Volunteer volunteer) {
         if (volunteerRepository.existsAllByUserId(userId) != null) {
-            volunteerRepository.save(volunteer);
-            return "Данные Волонтера успешно изменены в базе данных";
-        }
-        return "Волонтер отсутствует в базе данных!";
+            volunteer.setUserId(userId);
+            return volunteerRepository.save(volunteer);
+        } return null;
     }
 
     /**
      * Delete volunteer by id in volunteer repository
      * @param userId The ID of the user ID in repository
-     * @return String
      */
-    public String deleteVolunteer(long userId) {
+    public void deleteVolunteer(long userId) {
         if(volunteerRepository.existsAllByUserId(userId)) {
             volunteerRepository.deleteById(userId);
-            return "Волонтер успешно удален!";
         }
-        return "Волонтер отсутствует в базе данных!";
     }
-
-
 
 }

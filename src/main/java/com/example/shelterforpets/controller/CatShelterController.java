@@ -2,6 +2,12 @@ package com.example.shelterforpets.controller;
 
 import com.example.shelterforpets.entity.CatShelterClient;
 import com.example.shelterforpets.service.CatShelterService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,51 +22,91 @@ public class CatShelterController {
         this.catShelterService = catShelterService;
     }
 
-    /**
-     * Find client by id from cat shelter repository
-     * @param userId The ID of the user ID in repository
-     * @return String
-     */
+
+    @Operation(
+            summary = "Поиск клиента приюта для кошек по идентификатору",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Найденный клиент",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Клиент отсутствует в базе данных"
+                    )},
+            tags = "Сервис для работы с клиентами приюта для кошек"
+    )
     @GetMapping(value = "{id}")
-    public String findClientFromCatShelter(@RequestParam("id") long userId) {
-        return catShelterService.findClientFromCatShelter(userId);
+    public ResponseEntity<CatShelterClient> findClientFromCatShelter(@PathVariable("id") long userId) {
+        try {
+            return ResponseEntity.ok(catShelterService.findClientFromCatShelter(userId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    /**
-     * Save new client in cat shelter repository
-     * @param userId The ID of the user ID in repository
-     * @param name The name of client
-     * @param phoneNumber The phone number of client
-     * @param nickNamePet The nickname pet of client
-     * @return String
-     */
-    @PostMapping(value = "/post/{id}+{name}+{phoneNumber}+{nickNamePet}")
-    public String postClientFromCatShelter(@RequestParam("id") long userId,
-                                           @RequestParam("name") String name,
-                                           @RequestParam("phoneNumber") String phoneNumber,
-                                           @RequestParam("nickNamePet") String nickNamePet) {
-        return catShelterService.postClientFromCatShelter(userId, name, phoneNumber, nickNamePet);
+    @Operation(
+            summary = "Добавление клиента в базу данных клиентов приюта для кошек",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Добавленый клиент",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Добавленый клиент",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            )},
+            tags = "Сервис для работы с клиентами приюта для кошек"
+    )
+    @PostMapping(value = "/{id}")
+    public ResponseEntity<CatShelterClient> postClientFromCatShelter(@PathVariable("id") long userId,
+                                                                     @RequestBody CatShelterClient catShelterClient) {
+        return ResponseEntity.ok(catShelterService.postClientFromCatShelter(userId, catShelterClient));
     }
 
 
-    /**
-     * Edit client by id in cat shelter repository
-     * @param catShelterClient The client from cat shelter
-     * @return String
-     */
-    @PutMapping(value = "/put/")
-    public String putClientFromCatShelter(@RequestBody CatShelterClient catShelterClient) {
-        return catShelterService.putClientFromCatShelter(catShelterClient);
+    @Operation(
+            summary = "Редактирование клиента в базе данных клиентов приюта для кошек",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Редактируемый клиент",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Редактируемый клиент",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            )},
+            tags = "Сервис для работы с клиентами приюта для кошек"
+    )
+    @PutMapping(value = "/{id}")
+    public CatShelterClient putClientFromCatShelter(@PathVariable long userId,
+                                                    @RequestBody CatShelterClient catShelterClient) {
+        return catShelterService.putClientFromCatShelter(userId, catShelterClient);
     }
 
-    /**
-     * Delete client by id in cat shelter repository
-     * @param userId The ID of the user ID in repository
-     * @return String
-     */
-    @DeleteMapping(value = "/delete/{id}")
-    public String deleteClientFromCatShelter(@RequestParam("id") long userId) {
-        return catShelterService.deleteClientFromCatShelter(userId);
+    @Operation(
+            summary = "Удаление клиента из базы данных клиентов приюта для кошек",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Удаляемый клиент",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
+            tags = "Сервис для работы с клиентами приюта для кошек"
+    )
+    @DeleteMapping(value = "/{id}")
+    public void deleteClientFromCatShelter(@PathVariable("id") long userId) {
+        catShelterService.deleteClientFromCatShelter(userId);
     }
 
 }

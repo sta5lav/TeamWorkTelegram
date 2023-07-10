@@ -1,9 +1,12 @@
 package com.example.shelterforpets.controller;
 
-import com.example.shelterforpets.entity.DogShelterClient;
 import com.example.shelterforpets.entity.Volunteer;
-import com.example.shelterforpets.repository.VolunteerRepository;
 import com.example.shelterforpets.service.VolunteerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,50 +20,88 @@ public class VolunteerController {
         this.volunteerService = volunteerService;
     }
 
-    /**
-     * Find client by id from cat shelter repository
-     * @param userId The ID of the user ID in repository
-     * @return String
-     */
+    @Operation(
+            summary = "Поиск волонтера по идентификатору",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Найденный волонтер",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Волонтер отсутствует в базе данных"
+                    )},
+            tags = "Сервис для работы с волонтерами"
+    )
     @GetMapping(value = "{id}")
-    public String findVolunteer(@RequestParam("id") long userId) {
-        return volunteerService.findVolunteer(userId).toString();
+    public ResponseEntity<Volunteer> findVolunteer(@PathVariable("id") long userId) {
+        try {
+            return ResponseEntity.ok(volunteerService.findVolunteer(userId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    /**
-     * Save new client in cat shelter repository
-     * @param userId The ID of the user ID in repository
-     * @param name The name of client
-     * @param phoneNumber The phone number of client
-     * @return String
-     */
-    @PostMapping(value = "/post/{id}+{name}+{phoneNumber}")
-    public String postVolunteer(@RequestParam("id") long userId,
-                                           @RequestParam("name") String name,
-                                           @RequestParam("phoneNumber") String phoneNumber) {
-        return volunteerService.postVolunteer(userId, name, phoneNumber);
+    @Operation(
+            summary = "Добавление волонтера в базу данных",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Добавленый волонтер",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Добавленый волонтер",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            )},
+            tags = "Сервис для работы с волонтерами"
+    )
+    @PostMapping(value = "/{id}")
+    public ResponseEntity<Volunteer> postVolunteer(@PathVariable("id") long userId,
+                                                          @RequestBody Volunteer volunteer) {
+        return ResponseEntity.ok(volunteerService.postVolunteer(userId, volunteer));
     }
 
-
-    /**
-     * Edit volunteer by id in volunteer repository
-     * @param volunteer The volunteer from volunteer shelter
-     * @return String
-     */
-    @PutMapping(value = "/put/")
-    public String putVolunteer(@RequestBody Volunteer volunteer) {
-        return volunteerService.putVolunteer(volunteer);
+    @Operation(
+            summary = "Редактирование волонтера в базе данных",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Редактируемый волонтер",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Редактируемый волонтер",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            )},
+            tags = "Сервис для работы с волонтерами"
+    )
+    @PutMapping(value = "/{id}")
+    public Volunteer putVolunteer(@PathVariable long userId,
+                                         @RequestBody Volunteer volunteer) {
+        return volunteerService.putVolunteer(userId, volunteer);
     }
 
-    /**
-     * Delete volunteer by id in volunteer repository
-     * @param userId The ID of the user ID in repository
-     * @return String
-     */
-    @DeleteMapping(value = "/delete/{id}")
-    public String deleteVolunteer(@RequestParam("id") long userId) {
-        return volunteerService.deleteVolunteer(userId);
+    @Operation(
+            summary = "Удаление волонтера из базы данных",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Удаляемый волонтер",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
+            tags = "Сервис для работы с волонтерами"
+    )
+    @DeleteMapping(value = "/{id}")
+    public void deleteVolunteer(@PathVariable("id") long userId) {
+        volunteerService.deleteVolunteer(userId);
     }
-
-
 }

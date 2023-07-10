@@ -1,5 +1,6 @@
 package com.example.shelterforpets.service;
 
+import com.example.shelterforpets.entity.CatShelterClient;
 import com.example.shelterforpets.entity.DogShelterClient;
 import com.example.shelterforpets.repository.ClientRepository;
 import com.example.shelterforpets.repository.DogShelterClientRepository;
@@ -165,65 +166,49 @@ public class DogShelterService {
     }
 
     /**
-     * Find client by id from cat shelter repository
+     * Find client by id from dog shelter repository
      * @param userId The ID of the user ID in repository
-     * @return String
+     * @return Object DogShelter
      */
-    public String findClientFromDogShelter(long userId) {
-        if (dogShelterClientRepository.findAllByUserId(userId).toString() == null) {
-            return "Клиента нет в базе данных!";
-        }
-        return dogShelterClientRepository.findAllByUserId(userId).toString();
+    public DogShelterClient findClientFromDogShelter(long userId) {
+        return dogShelterClientRepository
+                .findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Клиента нет в базе данных!"));
     }
 
     /**
-     * Save new client in cat shelter repository
+     * Post client by id from dog shelter repository
      * @param userId The ID of the user ID in repository
-     * @param name The name of client
-     * @param phoneNumber The phone number of client
-     * @param nickNamePet The nickname pet of client
-     * @return String
+     * @return Object DogShelter
      */
-    public String postClientFromDogShelter(long userId,
-                                           String name,
-                                           String phoneNumber,
-                                           String nickNamePet) {
-        DogShelterClient dogShelterClient = new DogShelterClient();
-        dogShelterClient.setUserId(userId);
-        dogShelterClient.setName(name);
-        dogShelterClient.setPhoneNumber(phoneNumber);
-        dogShelterClient.setNickNamePet(nickNamePet);
-        dogShelterClientRepository.save(dogShelterClient);
-        return "Данные клента успешно добавлены в базу данных";
+    public DogShelterClient postClientFromDogShelter(long userId, DogShelterClient dogShelterClient) {
+        if (dogShelterClientRepository.existsAllByUserId(userId) == null) {
+            dogShelterClient.setUserId(userId);
+            return dogShelterClientRepository.save(dogShelterClient);
+        } return null;
     }
 
 
     /**
-     * Edit client by id in cat shelter repository
+     * Edit client by id in dog shelter repository
      * @param dogShelterClient The client from dog shelter
-     * @return String
+     * @return Object DogShelter
      */
-    public String putClientFromDogShelter(DogShelterClient dogShelterClient) {
-        Long userId = dogShelterClient.getUserId();
+    public DogShelterClient putClientFromDogShelter(long userId, DogShelterClient dogShelterClient) {
         if (dogShelterClientRepository.existsAllByUserId(userId) != null) {
-            dogShelterClientRepository.save(dogShelterClient);
-            return "Данные клента успешно изменены в базе данных";
-        }
-        return "Клиент отсутствует в базе данных!";
+            dogShelterClient.setUserId(userId);
+            return dogShelterClientRepository.save(dogShelterClient);
+        } return null;
     }
 
     /**
-     * Delete client by id in cat shelter repository
+     * Delete client by id in dog shelter repository
      * @param userId The ID of the user ID in repository
-     * @return String
      */
-    public String deleteClientFromDogShelter(long userId) {
+    public void deleteClientFromDogShelter(long userId) {
         if(dogShelterClientRepository.existsAllByUserId(userId)) {
             dogShelterClientRepository.deleteById(userId);
-            return "Клиент успешно удален!";
         }
-        return "Клиент отсутствует в базе данных!";
     }
-
 
 }
