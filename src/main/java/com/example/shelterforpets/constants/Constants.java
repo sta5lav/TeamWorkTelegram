@@ -1,6 +1,8 @@
 package com.example.shelterforpets.constants;
 
 public class Constants {
+   public final static String CAT_SHELTER = "Приют для кошек";
+   public final static String DOG_SHELTER = "Приют для собак";
 
    public static final String ABOUT_SHELTER = "О приюте";
    public static final String SCHEDULE_OF_SHELTER = "Расписание работы приюта и адрес, схема проезда";

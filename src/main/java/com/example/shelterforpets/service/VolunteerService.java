@@ -1,7 +1,6 @@
 package com.example.shelterforpets.service;
 
-import com.example.shelterforpets.entity.CatShelterClient;
-import com.example.shelterforpets.entity.DogShelterClient;
+
 import com.example.shelterforpets.entity.Volunteer;
 import com.example.shelterforpets.repository.VolunteerRepository;
 import org.springframework.stereotype.Service;

@@ -163,7 +163,7 @@ public class ShelterService {
         SendMessage message = new SendMessage(chatId, text);
 
         Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                "Приют для собак", "Приют для кошек")
+                CAT_SHELTER, DOG_SHELTER)
                 .oneTimeKeyboard(true)   // optional
                 .resizeKeyboard(true)    // optional
                 .selective(true);        // optional

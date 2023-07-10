@@ -3,6 +3,8 @@ package com.example.shelterforpets.service;
 import com.example.shelterforpets.entity.Step;
 import org.springframework.stereotype.Service;
 
+import static com.example.shelterforpets.constants.Constants.*;
+
 @Service
 public class StartMenuService {
 
@@ -19,11 +21,11 @@ public class StartMenuService {
     }
 
     public void startMenu(long chatId, String message) {
-        if (message.equals("Приют для кошек")) {
+        if (message.equals(CAT_SHELTER)) {
             catShelterService.catShelterMenu(chatId);
             shelterService.saveClient(chatId, Step.CAT_SHELTER_MENU);
             shelterService.saveClientInCatShelter(chatId);
-        } else if (message.equals("Приют для собак")) {
+        } else if (message.equals(DOG_SHELTER)) {
             dogShelterService.dogShelterMenu(chatId);
             shelterService.saveClient(chatId, Step.DOG_SHELTER_MENU);
             shelterService.saveClientInDogShelter(chatId);
