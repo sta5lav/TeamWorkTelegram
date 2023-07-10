@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import static com.example.shelterforpets.constants.Constants.*;
+
 
 @Service
 public class ShelterService {
@@ -34,7 +36,6 @@ public class ShelterService {
     // Конструктор для телеграмбота и репозиториев
     public ShelterService(TelegramBot telegramBot,
                           ClientRepository clientRepository,
-                          VolunteerRepository volunteerRepository,
                           CatShelterClientRepository catShelterClientRepository,
                           DogShelterClientRepository dogShelterClientRepository) {
         this.telegramBot = telegramBot;
@@ -51,13 +52,13 @@ public class ShelterService {
     public void infoShelterMenu(long chatId) {
         SendMessage message = new SendMessage(chatId, "Что вас интересует?");
         Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new String[]{"О приюте"},
-                new String[]{"Расписание работы приюта и адрес, схема проезда"},
-                new String[]{"Контактные данные охраны для оформления пропуска на машину"},
-                new String[]{"Общие рекомендации о технике безопасности на территории приюта"},
-                new String[]{"Принять и записать контактные данные для связи"},
-                new String[]{"Позвать волонтера"},
-                new String[]{"Вернуться в меню приюта"})
+                new String[]{ABOUT_SHELTER},
+                new String[]{SCHEDULE_OF_SHELTER},
+                new String[]{CONTACTS_FOR_ACCESS},
+                new String[]{RECOMMENDATION_OF_SAFETY},
+                new String[]{RECORD_CONTACT_DETAILS_FOR_COMMUNICATION},
+                new String[]{CALL_A_VOLUNTEER},
+                new String[]{BACK_TO_MENU_SHELTER})
                 .oneTimeKeyboard(false)   // optional
                 .resizeKeyboard(true)    // optional
                 .selective(true);        // optional
@@ -178,10 +179,10 @@ public class ShelterService {
     public void sendInfoShelterMenu(long chatId) {
         SendMessage message = new SendMessage(chatId, "Что вас интересует?");
         Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
-                new String[]{"Узнать информацию о приюте",
-                        "Как взять животное из приюта"},
-                new String[]{"Прислать отчет о питомце",
-                        "Позвать волонтера"})
+                new String[]{FOUND_INFO_ABOUT_SHELTER,
+                        HOW_TAKE_A_ANIMAL},
+                new String[]{SEND_A_PET_REPORT,
+                        CALL_A_VOLUNTEER})
                 .oneTimeKeyboard(false)   // optional
                 .resizeKeyboard(true)    // optional
                 .selective(true);        // optional
