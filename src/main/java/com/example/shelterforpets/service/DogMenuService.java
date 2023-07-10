@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.example.shelterforpets.constants.Constants.*;
+
 @Service
 public class DogMenuService {
 
@@ -29,14 +31,14 @@ public class DogMenuService {
         String firstName = update.message().chat().firstName();
 
         switch (message) {
-            case "Узнать информацию о приюте":
+            case FOUND_INFO_ABOUT_SHELTER:
                 dogShelterService.dogInfoShelterMenu(chatId);
                 shelterService.saveClient(chatId, Step.DOG_SHELTER_INFO_MENU);
                 break;
-            case "Как взять животное из приюта":
+            case HOW_TAKE_A_ANIMAL:
                 dogShelterService.dogAdoptionInstructions(chatId);
                 break;
-            case "Прислать отчет о питомце":
+            case SEND_A_PET_REPORT:
                 dogShelterService.report(chatId);
                 break;
             default:
@@ -48,25 +50,25 @@ public class DogMenuService {
         Matcher matcher;
 
         switch (message) {
-            case "О приюте":
+            case ABOUT_SHELTER:
                 dogShelterService.sendDogShelterInfo(chatId);
                 break;
-            case "Расписание работы приюта и адрес, схема проезда":
+            case SCHEDULE_OF_SHELTER:
                 dogShelterService.scheduleDogShelter(chatId);
                 break;
-            case "Контактные данные охраны для оформления пропуска на машину":
+            case CONTACTS_FOR_ACCESS:
                 dogShelterService.securityContactDetailsDogShelter(chatId);
                 break;
-            case "Общие рекомендации о технике безопасности на территории приюта":
+            case RECOMMENDATION_OF_SAFETY:
                 dogShelterService.recommendationInTheDogShelter(chatId);
                 break;
-            case "Принять и записать контактные данные для связи":
+            case RECORD_CONTACT_DETAILS_FOR_COMMUNICATION:
                 dogShelterService.nameAndPhoneNumberPattern(chatId);
                 break;
-            //case "Позвать волонтера":
-                //dogShelterService.getHelpingDogShelterVolunteers(chatId);
-                //break;
-            case "Вернуться в меню приюта":
+            case CALL_A_VOLUNTEER:
+                dogShelterService.getHelpingDogShelterVolunteers(chatId);
+                break;
+            case BACK_TO_MENU_SHELTER:
                 dogShelterService.dogShelterMenu(chatId);
                 shelterService.saveClient(chatId, Step.DOG_SHELTER_MENU);
                 break;

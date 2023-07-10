@@ -28,7 +28,6 @@ public class ShelterService {
 
     // Инжектим репозитории для клиентов
     private ClientRepository clientRepository;
-    private VolunteerRepository volunteerRepository;
     private CatShelterClientRepository catShelterClientRepository;
     private DogShelterClientRepository dogShelterClientRepository;
 
@@ -40,7 +39,6 @@ public class ShelterService {
                           DogShelterClientRepository dogShelterClientRepository) {
         this.telegramBot = telegramBot;
         this.clientRepository = clientRepository;
-        this.volunteerRepository = volunteerRepository;
         this.catShelterClientRepository = catShelterClientRepository;
         this.dogShelterClientRepository = dogShelterClientRepository;
     }

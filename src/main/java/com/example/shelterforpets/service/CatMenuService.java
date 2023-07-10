@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.example.shelterforpets.constants.Constants.*;
+
 @Service
 public class CatMenuService {
 
@@ -31,14 +33,14 @@ public class CatMenuService {
         String firstName = update.message().chat().firstName();
 
         switch (message) {
-            case "Узнать информацию о приюте":
+            case FOUND_INFO_ABOUT_SHELTER:
                 catShelterService.catInfoShelterMenu(chatId);
                 shelterService.saveClient(chatId, Step.CAT_SHELTER_INFO_MENU);
                 break;
-            case "Как взять животное из приюта":
+            case HOW_TAKE_A_ANIMAL:
                 catShelterService.catAdoptionInstructions(chatId);
                 break;
-            case "Прислать отчет о питомце":
+            case SEND_A_PET_REPORT:
                 catShelterService.report(chatId);
                 break;
             default:
@@ -51,25 +53,25 @@ public class CatMenuService {
         Matcher matcher;
 
         switch (message) {
-            case "О приюте":
+            case ABOUT_SHELTER:
                 catShelterService.sendCatShelterInfo(chatId);
                 break;
-            case "Расписание работы приюта и адрес, схема проезда":
+            case SCHEDULE_OF_SHELTER:
                 catShelterService.scheduleCatShelter(chatId);
                 break;
-            case "Контактные данные охраны для оформления пропуска на машину":
+            case CONTACTS_FOR_ACCESS:
                 catShelterService.securityContactDetailsCatShelter(chatId);
                 break;
-            case "Общие рекомендации о технике безопасности на территории приюта":
+            case RECOMMENDATION_OF_SAFETY:
                 catShelterService.recommendationInTheCatShelter(chatId);
                 break;
-            case "Принять и записать контактные данные для связи":
+            case RECORD_CONTACT_DETAILS_FOR_COMMUNICATION:
                 catShelterService.nameAndPhoneNumberPattern(chatId);
                 break;
-            case "Позвать волонтера":
+            case CALL_A_VOLUNTEER:
                 catShelterService.getHelpingCatShelterVolunteers(chatId);
                 break;
-            case "Вернуться в меню приюта":
+            case BACK_TO_MENU_SHELTER:
                 catShelterService.catShelterMenu(chatId);
                 shelterService.saveClient(chatId, Step.CAT_SHELTER_MENU);
                 break;

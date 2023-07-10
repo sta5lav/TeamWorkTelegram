@@ -6,7 +6,6 @@ import com.example.shelterforpets.repository.ClientRepository;
 import com.example.shelterforpets.repository.VolunteerRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.Random;
 
