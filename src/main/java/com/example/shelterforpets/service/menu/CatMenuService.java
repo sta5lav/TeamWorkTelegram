@@ -1,6 +1,8 @@
-package com.example.shelterforpets.service;
+package com.example.shelterforpets.service.menu;
 
 import com.example.shelterforpets.entity.Step;
+import com.example.shelterforpets.service.CatShelterService;
+import com.example.shelterforpets.service.ShelterService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -39,6 +41,11 @@ public class CatMenuService {
                 break;
             case HOW_TAKE_A_ANIMAL:
                 catShelterService.catAdoptionInstructions(chatId);
+                /*
+                catShelterService....вызвать метод с меню;
+                Записть степа в бд
+                shelterService.saveClient(chatId, Step.CAT_SHELTER_CONSULTATION_MENU);
+                 */
                 break;
             case SEND_A_PET_REPORT:
                 catShelterService.report(chatId);

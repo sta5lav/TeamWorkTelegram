@@ -4,7 +4,7 @@ import com.example.shelterforpets.entity.Step;
 import com.example.shelterforpets.service.CatShelterService;
 import com.example.shelterforpets.service.DogShelterService;
 import com.example.shelterforpets.service.ShelterService;
-import com.example.shelterforpets.service.StartMenuService;
+import com.example.shelterforpets.service.menu.StartMenuService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
