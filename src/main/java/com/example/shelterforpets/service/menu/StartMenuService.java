@@ -1,6 +1,9 @@
-package com.example.shelterforpets.service;
+package com.example.shelterforpets.service.menu;
 
 import com.example.shelterforpets.entity.Step;
+import com.example.shelterforpets.service.CatShelterService;
+import com.example.shelterforpets.service.DogShelterService;
+import com.example.shelterforpets.service.ShelterService;
 import org.springframework.stereotype.Service;
 
 import static com.example.shelterforpets.constants.Constants.*;

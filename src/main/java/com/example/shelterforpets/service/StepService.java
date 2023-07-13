@@ -2,6 +2,9 @@ package com.example.shelterforpets.service;
 
 import com.example.shelterforpets.entity.Step;
 import com.example.shelterforpets.listener.TelegramBotUpdatesListener;
+import com.example.shelterforpets.service.menu.CatMenuService;
+import com.example.shelterforpets.service.menu.DogMenuService;
+import com.example.shelterforpets.service.menu.StartMenuService;
 import com.pengrad.telegrambot.model.Update;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +59,17 @@ public class StepService {
                 case DOG_SHELTER_INFO_MENU:
                     dogMenuService.dogShelterInfoMenu(chatId, message);
                     break;
+                /*
+                Обработка новых степов
+
+                case CAT_SHELTER_CONSULTATION_MENU:
+                    catMenuService....вызвать нужный метод;
+                    break;
+                case DOG_SHELTER_CONSULTATION_MENU:
+                    dogMenuService....вызвать нужный метод;
+                    break;
+                 */
+
             }
         }
     }

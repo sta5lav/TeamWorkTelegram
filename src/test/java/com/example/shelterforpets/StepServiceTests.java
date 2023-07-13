@@ -2,6 +2,9 @@ package com.example.shelterforpets;
 
 import com.example.shelterforpets.entity.Step;
 import com.example.shelterforpets.service.*;
+import com.example.shelterforpets.service.menu.CatMenuService;
+import com.example.shelterforpets.service.menu.DogMenuService;
+import com.example.shelterforpets.service.menu.StartMenuService;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
