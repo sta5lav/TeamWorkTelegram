@@ -59,17 +59,12 @@ public class StepService {
                 case DOG_SHELTER_INFO_MENU:
                     dogMenuService.dogShelterInfoMenu(chatId, message);
                     break;
-                /*
-                Обработка новых степов
-
                 case CAT_SHELTER_CONSULTATION_MENU:
-                    catMenuService....вызвать нужный метод;
+                    catMenuService.catShelterConsultantMenu(chatId, message);
                     break;
                 case DOG_SHELTER_CONSULTATION_MENU:
-                    dogMenuService....вызвать нужный метод;
+                    dogMenuService.dogShelterConsultantMenu(chatId, message);
                     break;
-                 */
-
             }
         }
     }
