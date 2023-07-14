@@ -40,7 +40,7 @@ public class DogShelterService {
     }
 
     public void dogAdoptionInstructions(long chatId) {
-        shelterService.sendAnimalAdoptionInstructions(chatId);
+        shelterService.clientAdoptionInstructionsForDogShelter(chatId);
     }
 
     public void report(long chatId) {
@@ -52,6 +52,7 @@ public class DogShelterService {
     }
 
     //Информация о приюте для собак
+
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -68,6 +69,7 @@ public class DogShelterService {
     }
 
     //Вывод расписания приюта для собак
+
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -84,6 +86,7 @@ public class DogShelterService {
     }
 
     //Вывод контактных данных охраны для оформления пропуска на машину в приют для собак
+
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -99,6 +102,7 @@ public class DogShelterService {
     }
 
     //Вывод общих рекомендаций о технике безопасности на территории приюта для собак
+
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -118,6 +122,7 @@ public class DogShelterService {
     }
 
     //Позвать волонтера приюта для собак
+
     /**
      * Sends cat shelter information to the specified chat ID.
      *
@@ -153,6 +158,91 @@ public class DogShelterService {
         dogShelterClientRepository.save(client);
     }
 
+
+    public void sendRulesDogShelter(long chatId) {
+        String shelterInfoText = "Правила знакомства с животным до того, как забрать его из приюта:\n" +
+                "1. ...\n" +
+                "2. ...\n" +
+                "3. ...\n";    //!!!!
+        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ СОБАК
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    public void sendDocumentsDogShelter(long chatId) {
+        String shelterInfoText = "Список документов, необходимых для того, чтобы взять животное из приюта:\n" +
+                "1. ...\n" +
+                "2. ...\n" +
+                "3. ...\n";    //!!!!
+        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ СОБАК
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    public void sendRecommendationsForTransportingDogs(long chatId) {
+        String shelterInfoText = "Список рекомендаций по транспортировке животного:\n" +
+                "1. ...\n" +
+                "2. ...\n" +
+                "3. ...\n";    //!!!!
+        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ СОБАК
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    public void sendRecommendationsForImprovementsPuppy(long chatId) {
+        String shelterInfoText = "Список рекомендаций по обустройству дома для щенка:\n" +
+                "1. ...\n" +
+                "2. ...\n" +
+                "3. ...\n";
+        //!!!!    //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ СОБАК
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    public void sendRecommendationsForImprovementsAdultDogs(long chatId) {
+        String shelterInfoText = "Список рекомендаций по обустройству дома для взрослого животного:\n" +
+                "1. ...\n" +
+                "2. ...\n" +
+                "3. ...\n";
+        //!!!!    //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ СОБАК
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    public void sendRecommendationsForImprovementsAdultDogsWithDisabilities(long chatId) {
+        String shelterInfoText = "Список рекомендаций по обустройству дома для животного с " +
+                "ограниченными возможностями (зрение, передвижение):\n" +
+                "1. ...\n" +
+                "2. ...\n" +
+                "3. ...\n";    //!!!!
+        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ СОБАК
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    public void adviceToADogHandlerOnPrimaryCommunicationWithADog(long chatId) {
+        String shelterInfoText = "Советы кинолога по первичному общению с собакой:\n" +
+                "1. ...\n" +
+                "2. ...\n" +
+                "3. ...\n";    //!!!!
+        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ СОБАК
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    public void recommendationOnTheCheckedDogHandler(long chatId) {
+        String shelterInfoText = "Рекомендации по проверенным кинологам " +
+                "для дальнейшего обращения к ним:\n" +
+                "1. ...\n" +
+                "2. ...\n" +
+                "3. ...\n";    //!!!!
+        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ СОБАК
+        sendNotification(chatId, shelterInfoText);
+    }
+
+    public void reasonsWhyTheyMayRefuseAndNotLetYouTakeTheDog(long chatId) {
+        String shelterInfoText = "Список причин, почему могут отказать " +
+                "и не дать забрать собаку из приюта:\n" +
+                "1. ...\n" +
+                "2. ...\n" +
+                "3. ...\n";    //!!!!
+        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ СОБАК
+        sendNotification(chatId, shelterInfoText);
+    }
+
     /**
      * Sends a notification message to the specified chat ID using the given text.
      *
@@ -166,6 +256,7 @@ public class DogShelterService {
 
     /**
      * Find client by id from dog shelter repository
+     *
      * @param userId The ID of the user ID in repository
      * @return Object DogShelter
      */
@@ -177,6 +268,7 @@ public class DogShelterService {
 
     /**
      * Post client by id from dog shelter repository
+     *
      * @param userId The ID of the user ID in repository
      * @return Object DogShelter
      */
@@ -184,12 +276,14 @@ public class DogShelterService {
         if (dogShelterClientRepository.existsAllByUserId(userId) == null) {
             dogShelterClient.setUserId(userId);
             return dogShelterClientRepository.save(dogShelterClient);
-        } return null;
+        }
+        return null;
     }
 
 
     /**
      * Edit client by id in dog shelter repository
+     *
      * @param dogShelterClient The client from dog shelter
      * @return Object DogShelter
      */
@@ -197,15 +291,17 @@ public class DogShelterService {
         if (dogShelterClientRepository.existsAllByUserId(userId) != null) {
             dogShelterClient.setUserId(userId);
             return dogShelterClientRepository.save(dogShelterClient);
-        } return null;
+        }
+        return null;
     }
 
     /**
      * Delete client by id in dog shelter repository
+     *
      * @param userId The ID of the user ID in repository
      */
     public void deleteClientFromDogShelter(long userId) {
-        if(dogShelterClientRepository.existsAllByUserId(userId)) {
+        if (dogShelterClientRepository.existsAllByUserId(userId)) {
             dogShelterClientRepository.deleteById(userId);
         }
     }
