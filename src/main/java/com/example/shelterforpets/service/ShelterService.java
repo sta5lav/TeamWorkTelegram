@@ -60,7 +60,7 @@ public class ShelterService {
                 new String[]{CALL_A_VOLUNTEER},
                 new String[]{BACK_TO_MENU_SHELTER})
                 .oneTimeKeyboard(false)   // optional
-                .resizeKeyboard(true)    // optional
+                .resizeKeyboard(false)    // optional
                 .selective(true);        // optional
         message.replyMarkup(replyKeyboardMarkup);
         telegramBot.execute(message);
@@ -81,7 +81,7 @@ public class ShelterService {
                 new String[]{CALL_A_VOLUNTEER},
                 new String[]{BACK_TO_MENU_SHELTER})
                 .oneTimeKeyboard(false)   // optional
-                .resizeKeyboard(true)    // optional
+                .resizeKeyboard(false)    // optional
                 .selective(true);        // optional
         message.replyMarkup(replyKeyboardMarkup);
         telegramBot.execute(message);

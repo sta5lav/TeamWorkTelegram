@@ -31,7 +31,7 @@ public class Constants {
    public static final String HOME_IMPROVEMENT_FOR_AN_ADULT_ANIMAL =
            "Выдать список рекомендаций по обустройству дома для взрослого животного";
    public static final String HOME_IMPROVEMENT_FOR_AN_ANIMAL_WITH_DISABILITIES =
-           "Выдать список рекомендаций по обустройству дома для животного с " +
+           "Обустройство дома для животного с " +
                    "ограниченными возможностями (зрение, передвижение)";
    public static final String HOME_IMPROVEMENT_FOR_A_PUPPY =
            "Список рекомендаций по обустройству дома для щенка";
