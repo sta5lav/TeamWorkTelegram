@@ -59,12 +59,10 @@ public class DogShelterService {
      * @param chatId The ID of the chat to send the message to.
      */
     public void sendDogShelterInfo(long chatId) {
-        String shelterInfoText = "Информация о приюте:\n" +
-                "Адрес: ...\n" +
-                "Телефон: ...\n" +
-                "Email: ...";
-        //!!!!
-        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ СОБАК
+        String shelterInfoText = "Приют для кошек «Лучший друг»\n" +
+                "Адрес: Московская область, Химки, Ленинградское шоссе\n" +
+                "Телефон: +7 (999) 095-62-65\n" +
+                "Email: luchshiidrug@dogpriut.ru";
         sendNotification(chatId, shelterInfoText);
     }
 
@@ -77,11 +75,8 @@ public class DogShelterService {
      */
     public void scheduleDogShelter(long chatId) {
         String scheduleDogShelter = "Информация о работе приюта:\n" +
-                "Время работы: ...\n" +
-                "Адрес: ...\n" +
-                "Схема проезда: ...";
-        //!!!!
-        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О РАБОТЕ ПРИЮТА ДЛЯ СОБАК
+                "Время работы: 24/7 \n" +
+                "Адрес: Московская область, Химки, Ленинградское шоссе\n";
         sendNotification(chatId, scheduleDogShelter);
     }
 
@@ -94,10 +89,8 @@ public class DogShelterService {
      */
     public void securityContactDetailsDogShelter(long chatId) {
         String securityContactDetailsDogShelter = "Контактные данные охраны приюта:\n" +
-                "Телефон: ...\n" +
-                "Имя: ...";
-        //!!!!
-        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ ОБ ОХРАНЕ ПРИЮТА ДЛЯ СОБАК
+                "Телефон: +7 (999) 095-25-60 \n" +
+                "Имя: Степан Викторович";
         sendNotification(chatId, securityContactDetailsDogShelter);
     }
 
@@ -110,10 +103,8 @@ public class DogShelterService {
      */
     public void recommendationInTheDogShelter(long chatId) {
         String recommendationInTheCatShelter = "Техника безопасности:\n" +
-                "1. ...\n" +
-                "2. ...";
-        //!!!!
-        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ТБ В ПРИЮТЕ ДЛЯ СОБАК
+                "1. Запрещается находиться на территории приюта без сопровождения персонала приюта. \n" +
+                "2. Запрещается открывть вольеры. ";
         sendNotification(chatId, recommendationInTheCatShelter);
     }
 
