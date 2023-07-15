@@ -56,12 +56,10 @@ public class CatShelterService {
      * @param chatId The ID of the chat to send the message to.
      */
     public void sendCatShelterInfo(long chatId) {
-        String shelterInfoText = "Информация о приюте:\n" +
-                "Адрес: ...\n" +
-                "Телефон: ...\n" +
-                "Email: ...";
-        //!!!!
-        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ КОШЕК
+        String shelterInfoText = "Приют для кошек «Мурка» \n" +
+                "Адрес: г. Москва, Дмитровское шоссе\n" +
+                "Телефон: +7 (999) 095-62-63\n" +
+                "Email: murka@catpriut.ru";
         sendNotification(chatId, shelterInfoText);
     }
 
@@ -73,11 +71,8 @@ public class CatShelterService {
      */
     public void scheduleCatShelter(long chatId) {
         String scheduleCatShelter = "Информация о работе приюта:\n" +
-                "Время работы: ...\n" +
-                "Адрес: ...\n" +
-                "Схема проезда: ...";
-        //!!!!
-        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О РАБОТЕ ПРИЮТА ДЛЯ КОШЕК
+                "Время работы: 24/7 \n" +
+                "Адрес: г. Москва, Дмитровское шоссе \n";
         sendNotification(chatId, scheduleCatShelter);
     }
 
@@ -89,10 +84,8 @@ public class CatShelterService {
      */
     public void securityContactDetailsCatShelter(long chatId) {
         String securityContactDetailsCatShelter = "Контактные данные охраны приюта:\n" +
-                "Телефон: ...\n" +
-                "Имя: ...";
-        //!!!!
-        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ ОБ ОХРАНЕ ПРИЮТА ДЛЯ КОШЕК
+                "Телефон: +7 (999) 095-62-61 \n" +
+                "Имя: Добрыня Никитич";
         sendNotification(chatId, securityContactDetailsCatShelter);
     }
 
@@ -104,10 +97,8 @@ public class CatShelterService {
      */
     public void recommendationInTheCatShelter(long chatId) {
         String recommendationInTheCatShelter = "Техника безопасности:\n" +
-                "1. ...\n" +
-                "2. ...";
-        //!!!!
-        //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ТБ В ПРИЮТЕ ДЛЯ КОШЕК
+                "1. Запрещается находиться на территории приюта без сопровождения персонала приюта. \n" +
+                "2. Запрещается открывть вольеры. ";
         sendNotification(chatId, recommendationInTheCatShelter);
     }
 
