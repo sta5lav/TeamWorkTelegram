@@ -1,5 +1,6 @@
 package com.example.shelterforpets.entity;
 
+import com.example.shelterforpets.constants.Step;
 import lombok.Data;
 
 import javax.persistence.*;

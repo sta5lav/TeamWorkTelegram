@@ -1,6 +1,6 @@
 package com.example.shelterforpets.service.menu;
 
-import com.example.shelterforpets.entity.Step;
+import com.example.shelterforpets.constants.Step;
 import com.example.shelterforpets.service.CatShelterService;
 import com.example.shelterforpets.service.DogShelterService;
 import com.example.shelterforpets.service.ShelterService;

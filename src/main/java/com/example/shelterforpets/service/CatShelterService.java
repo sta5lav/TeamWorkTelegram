@@ -1,6 +1,7 @@
 package com.example.shelterforpets.service;
 
 import com.example.shelterforpets.entity.CatShelterClient;
+import com.example.shelterforpets.exceptions.ClientNotFoundException;
 import com.example.shelterforpets.repository.CatShelterClientRepository;
 import com.example.shelterforpets.repository.ClientRepository;
 import com.example.shelterforpets.repository.VolunteerRepository;
@@ -17,17 +18,20 @@ public class CatShelterService {
     private final VolunteerRepository volunteerRepository;
     private final ClientRepository clientRepository;
     private final CatShelterClientRepository catShelterClientRepository;
+    private final NotificationService notificationService;
 
     public CatShelterService(TelegramBot telegramBot,
                              ShelterService shelterService,
                              VolunteerRepository volunteerRepository,
                              ClientRepository clientRepository,
-                             CatShelterClientRepository catShelterClientRepository) {
+                             CatShelterClientRepository catShelterClientRepository,
+                             NotificationService notificationService) {
         this.telegramBot = telegramBot;
         this.shelterService = shelterService;
         this.volunteerRepository = volunteerRepository;
         this.clientRepository = clientRepository;
         this.catShelterClientRepository = catShelterClientRepository;
+        this.notificationService = notificationService;
     }
 
     public void catShelterMenu(long chatId) {
@@ -64,7 +68,7 @@ public class CatShelterService {
                 "Email: ...";
         //!!!!
         //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ КОШЕК
-        sendNotification(chatId, shelterInfoText);
+        notificationService.sendNotification(chatId, shelterInfoText);
     }
 
     //Вывод расписания приюта для кошек
@@ -81,7 +85,7 @@ public class CatShelterService {
                 "Схема проезда: ...";
         //!!!!
         //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О РАБОТЕ ПРИЮТА ДЛЯ КОШЕК
-        sendNotification(chatId, scheduleCatShelter);
+        notificationService.sendNotification(chatId, scheduleCatShelter);
     }
 
     //Вывод контактных данных охраны для оформления пропуска на машину в приют для кошек
@@ -97,7 +101,7 @@ public class CatShelterService {
                 "Имя: ...";
         //!!!!
         //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ ОБ ОХРАНЕ ПРИЮТА ДЛЯ КОШЕК
-        sendNotification(chatId, securityContactDetailsCatShelter);
+        notificationService.sendNotification(chatId, securityContactDetailsCatShelter);
     }
 
     //Вывод общих рекомендаций о технике безопасности на территории приюта для кошек
@@ -113,7 +117,7 @@ public class CatShelterService {
                 "2. ...";
         //!!!!
         //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ТБ В ПРИЮТЕ ДЛЯ КОШЕК
-        sendNotification(chatId, recommendationInTheCatShelter);
+        notificationService.sendNotification(chatId, recommendationInTheCatShelter);
     }
 
     public void nameAndPhoneNumberPattern(long chatId) {
@@ -130,17 +134,19 @@ public class CatShelterService {
     public void getHelpingCatShelterVolunteers(long chatId) {
         Random rn = new Random();
         int answer = rn.nextInt(5) + 1;
-        volunteerRepository.findAllByUserId(answer); //Добавил случайный выбор волонтера
-        SendMessage messageToVolunteer = new SendMessage(
-                volunteerRepository.findAllByUserId(answer).getUserId(),
-                "С вами хочет связаться клиент: " +
-                        clientRepository.findAllByUserId(chatId).getUserId());
-        telegramBot.execute(messageToVolunteer);
-        SendMessage message = new SendMessage(chatId,
-                "С Вами свяжется волонтер!" +
-                        " Вы можете ему позвонить по указаному номеру телефона: " +
-                        volunteerRepository.findAllByUserId(answer).getPhoneNumber());
-        telegramBot.execute(message);
+        volunteerRepository.findByUserId(answer); //Добавил случайный выбор волонтера
+
+        long volunteerId = volunteerRepository.findByUserId(answer).orElseThrow(() ->
+                new RuntimeException("Волонтера нет в базе данных!")).getUserId();
+        String messageToVolunteer = "С вами хочет связаться клиент: " +
+                clientRepository.findByUserId(chatId).getUserId();
+        notificationService.sendNotification(volunteerId, messageToVolunteer);
+
+        String messageToClient = "С Вами свяжется волонтер!" +
+                " Вы можете ему позвонить по указаному номеру телефона: " +
+                volunteerRepository.findByUserId(answer).orElseThrow(() ->
+                        new ClientNotFoundException("Клиента нет в базе данных!")).getPhoneNumber();
+        notificationService.sendNotification(chatId, messageToClient);
     }
 
     /**
@@ -151,7 +157,8 @@ public class CatShelterService {
      * @param phoneNumber The text of the notification message.
      */
     public void saveCatShelterClientNameAndPhoneNumber(long chatId, String name, String phoneNumber) {
-        CatShelterClient client = catShelterClientRepository.findAllByUserId(chatId);
+        CatShelterClient client = catShelterClientRepository.findByUserId(chatId).
+                orElseThrow(() -> new ClientNotFoundException("Клиента нет в базе данных!"));
         client.setName(name);
         client.setPhoneNumber(phoneNumber);
         catShelterClientRepository.save(client);
@@ -164,7 +171,7 @@ public class CatShelterService {
                 "2. ...\n" +
                 "3. ...\n";    //!!!!
         //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ КОШЕК
-        sendNotification(chatId, shelterInfoText);
+        notificationService.sendNotification(chatId, shelterInfoText);
     }
 
     public void sendDocumentsCatShelter(long chatId) {
@@ -173,7 +180,7 @@ public class CatShelterService {
                 "2. ...\n" +
                 "3. ...\n";    //!!!!
         //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ КОШЕК
-        sendNotification(chatId, shelterInfoText);
+        notificationService.sendNotification(chatId, shelterInfoText);
     }
 
     public void sendRecommendationsForTransportingCats(long chatId) {
@@ -182,7 +189,7 @@ public class CatShelterService {
                 "2. ...\n" +
                 "3. ...\n";    //!!!!
         //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ КОШЕК
-        sendNotification(chatId, shelterInfoText);
+        notificationService.sendNotification(chatId, shelterInfoText);
     }
 
     public void sendRecommendationsForImprovementsKitten(long chatId) {
@@ -191,7 +198,7 @@ public class CatShelterService {
                 "2. ...\n" +
                 "3. ...\n";
         //!!!!    //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ КОШЕК
-        sendNotification(chatId, shelterInfoText);
+        notificationService.sendNotification(chatId, shelterInfoText);
     }
 
     public void sendRecommendationsForImprovementsAdultCats(long chatId) {
@@ -200,29 +207,18 @@ public class CatShelterService {
                 "2. ...\n" +
                 "3. ...\n";
         //!!!!    //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ КОШЕК
-        sendNotification(chatId, shelterInfoText);
+        notificationService.sendNotification(chatId, shelterInfoText);
     }
 
     public void sendRecommendationsForImprovementsAdultCatsWithDisabilities(long chatId) {
-        String shelterInfoText = "Список рекомендаций по обустройству дома для животного с " + "ограниченными возможностями (зрение, передвижение):\n" +
+        String shelterInfoText = "Список рекомендаций по обустройству дома для животного с " +
+                "ограниченными возможностями (зрение, передвижение):\n" +
                 "1. ...\n" +
                 "2. ...\n" +
                 "3. ...\n";    //!!!!
         //ЗДЕСЬ НУЖНО ДОПОЛНИТЬ КОНКРЕТНУЮ ИНФОРМАЦИЮ О ПРИЮТЕ ДЛЯ КОШЕК
-        sendNotification(chatId, shelterInfoText);
+        notificationService.sendNotification(chatId, shelterInfoText);
     }
-
-    /**
-     * Sends a notification message to the specified chat ID using the given text.
-     * * @param chatId The ID of the chat to send the notification to.
-     *
-     * @param text The text of the notification message.
-     */
-    private void sendNotification(long chatId, String text) {
-        SendMessage message = new SendMessage(chatId, text);
-        telegramBot.execute(message);
-    }
-
 
     //
     //
@@ -238,7 +234,7 @@ public class CatShelterService {
     public CatShelterClient findClientFromCatShelter(long userId) {
         return catShelterClientRepository
                 .findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Клиента нет в базе данных!"));
+                .orElseThrow(() -> new ClientNotFoundException("Клиента нет в базе данных!"));
     }
 
     /**
@@ -248,7 +244,7 @@ public class CatShelterService {
      * @return Object CatShelter
      */
     public CatShelterClient postClientFromCatShelter(long userId, CatShelterClient catShelterClient) {
-        if (catShelterClientRepository.existsAllByUserId(userId) == null) {
+        if (!catShelterClientRepository.existsByUserId(userId)) {
             catShelterClient.setUserId(userId);
             return catShelterClientRepository.save(catShelterClient);
         }
@@ -263,7 +259,7 @@ public class CatShelterService {
      * @return Object CatShelter
      */
     public CatShelterClient putClientFromCatShelter(long userId, CatShelterClient catShelterClient) {
-        if (catShelterClientRepository.existsAllByUserId(userId) != null) {
+        if (catShelterClientRepository.existsByUserId(userId)) {
             catShelterClient.setUserId(userId);
             return catShelterClientRepository.save(catShelterClient);
         }
@@ -276,10 +272,8 @@ public class CatShelterService {
      * @param userId The ID of the user ID in repository
      */
     public void deleteClientFromCatShelter(long userId) {
-        if (catShelterClientRepository.existsAllByUserId(userId)) {
+        if (catShelterClientRepository.existsByUserId(userId)) {
             catShelterClientRepository.deleteById(userId);
         }
     }
-
-
 }
