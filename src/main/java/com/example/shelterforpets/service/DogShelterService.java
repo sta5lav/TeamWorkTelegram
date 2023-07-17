@@ -1,36 +1,53 @@
 package com.example.shelterforpets.service;
 
+import com.example.shelterforpets.entity.DogReport;
 import com.example.shelterforpets.entity.DogShelterClient;
 import com.example.shelterforpets.exceptions.ClientNotFoundException;
 import com.example.shelterforpets.repository.ClientRepository;
+import com.example.shelterforpets.repository.DogReportsRepository;
 import com.example.shelterforpets.repository.DogShelterClientRepository;
 import com.example.shelterforpets.repository.VolunteerRepository;
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.model.PhotoSize;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.GetFile;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Random;
 
 @Service
 public class DogShelterService {
+
+    private final LocalDateTime date = LocalDate.now()
+            .atTime(LocalTime.now().getHour(),LocalTime.now().getMinute());
+
     private final TelegramBot telegramBot;
     private final ShelterService shelterService;
     private final VolunteerRepository volunteerRepository;
     private final ClientRepository clientRepository;
     private final DogShelterClientRepository dogShelterClientRepository;
     private final NotificationService notificationService;
+    private final DogReportsRepository dogReportsRepository;
 
     public DogShelterService(TelegramBot telegramBot,
                              ShelterService shelterService,
                              VolunteerRepository volunteerRepository,
                              ClientRepository clientRepository,
-                             DogShelterClientRepository dogShelterClientRepository, NotificationService notificationService) {
+                             DogShelterClientRepository dogShelterClientRepository,
+                             NotificationService notificationService,
+                             DogReportsRepository dogReportsRepository) {
         this.telegramBot = telegramBot;
         this.shelterService = shelterService;
         this.volunteerRepository = volunteerRepository;
         this.clientRepository = clientRepository;
         this.dogShelterClientRepository = dogShelterClientRepository;
         this.notificationService = notificationService;
+        this.dogReportsRepository = dogReportsRepository;
     }
 
     public void dogShelterMenu(long chatId) {
@@ -247,7 +264,68 @@ public class DogShelterService {
         notificationService.sendNotification(chatId, shelterInfoText);
     }
 
+    public void savePhotoReport(Update update) {
+        long chatId = update.message().chat().id();
+        //Здесь необходимо добавить проверку отчета по дате.
+        // Чтобы отчеты сохранялись в отдельную позицию, а не перезаписывались
+        if (dogReportsRepository.findByUserId(chatId) != null &&
+                dogReportsRepository.findByUserId(chatId).getPetReport() != null) {
+            DogReport dogReport = dogReportsRepository.findByUserId(chatId);
+            PhotoSize[] photoSizes = update.message().photo();
+            if (photoSizes != null && photoSizes.length > 1) {
+                PhotoSize photoSize = photoSizes[photoSizes.length - 1];
+                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+                if (getFileResponse.isOk()) {
+                    try {
+                        byte[] photo = telegramBot.getFileContent(getFileResponse.file());
+                        dogReport.setPhotoPet(photo);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            dogReportsRepository.save(dogReport);
+            notificationService.sendNotification(update.message().chat().id(), "Ваш отчет зарегистрирован!");
+        } else {
+            DogReport dogReport = new DogReport();
+            dogReport.setUserId(update.message().chat().id());
+            dogReport.setDateReport(date);
+            PhotoSize[] photoSizes = update.message().photo();
+            dogReport.setDateReport(date);
+            if (photoSizes != null && photoSizes.length > 1) {
+                PhotoSize photoSize = photoSizes[photoSizes.length - 1];
+                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+                if (getFileResponse.isOk()) {
+                    try {
+                        byte[] photo = telegramBot.getFileContent(getFileResponse.file());
+                        dogReport.setPhotoPet(photo);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            dogReportsRepository.save(dogReport);
+            notificationService.sendNotification(update.message().chat().id(), "Осталось отправить лишь отчет по указанной форме! :)");
+        }
+    }
 
+    public void saveStringReport(Update update) {
+        long chatId = update.message().chat().id();
+        if (dogReportsRepository.findByUserId(chatId) != null &&
+                dogReportsRepository.findByUserId(chatId).getDateReport() != null) {
+            DogReport dogReport = dogReportsRepository.findByUserId(chatId);
+            dogReport.setPetReport(update.message().text());
+            dogReportsRepository.save(dogReport);
+            notificationService.sendNotification(update.message().chat().id(), "Ваш отчет зарегистрирован!");
+        } else {
+            DogReport dogReport = new DogReport();
+            dogReport.setUserId(update.message().chat().id());
+            dogReport.setPetReport(update.message().text());
+            dogReport.setDateReport(date);
+            dogReportsRepository.save(dogReport);
+            notificationService.sendNotification(update.message().chat().id(), "Осталось отправить лишь фото питомца! :)");
+        }
+    }
     /**
      * Find client by id from dog shelter repository
      *

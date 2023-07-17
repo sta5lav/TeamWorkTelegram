@@ -1,6 +1,7 @@
 package com.example.shelterforpets;
 
 import com.example.shelterforpets.entity.CatShelterClient;
+import com.example.shelterforpets.repository.CatReportsRepository;
 import com.example.shelterforpets.repository.CatShelterClientRepository;
 import com.example.shelterforpets.repository.ClientRepository;
 import com.example.shelterforpets.repository.VolunteerRepository;
@@ -34,11 +35,13 @@ public class CatShelterServiceTests {
     private CatShelterClientRepository catShelterClientRepository;
     @Mock
     private NotificationService notificationService;
+    @Mock
+    CatReportsRepository catReportsRepository;
 
     @BeforeEach
     public void init() {
         catShelterService = new CatShelterService(telegramBot, shelterService,
-                volunteerRepository, clientRepository,catShelterClientRepository, notificationService);
+                volunteerRepository, clientRepository,catShelterClientRepository, notificationService, catReportsRepository);
     }
 
     @Test

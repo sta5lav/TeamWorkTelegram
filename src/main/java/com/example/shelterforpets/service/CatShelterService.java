@@ -1,37 +1,53 @@
 package com.example.shelterforpets.service;
 
+import com.example.shelterforpets.entity.CatReport;
 import com.example.shelterforpets.entity.CatShelterClient;
 import com.example.shelterforpets.exceptions.ClientNotFoundException;
+import com.example.shelterforpets.repository.CatReportsRepository;
 import com.example.shelterforpets.repository.CatShelterClientRepository;
 import com.example.shelterforpets.repository.ClientRepository;
 import com.example.shelterforpets.repository.VolunteerRepository;
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.model.PhotoSize;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.GetFile;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Random;
 
 @Service
 public class CatShelterService {
+
+    private final LocalDateTime date = LocalDate.now()
+            .atTime(LocalTime.now().getHour(),LocalTime.now().getMinute());
+
     private final TelegramBot telegramBot;
     private final ShelterService shelterService;
     private final VolunteerRepository volunteerRepository;
     private final ClientRepository clientRepository;
     private final CatShelterClientRepository catShelterClientRepository;
     private final NotificationService notificationService;
+    private final CatReportsRepository catReportsRepository;
 
     public CatShelterService(TelegramBot telegramBot,
                              ShelterService shelterService,
                              VolunteerRepository volunteerRepository,
                              ClientRepository clientRepository,
                              CatShelterClientRepository catShelterClientRepository,
-                             NotificationService notificationService) {
+                             NotificationService notificationService,
+                             CatReportsRepository catReportsRepository) {
         this.telegramBot = telegramBot;
         this.shelterService = shelterService;
         this.volunteerRepository = volunteerRepository;
         this.clientRepository = clientRepository;
         this.catShelterClientRepository = catShelterClientRepository;
         this.notificationService = notificationService;
+        this.catReportsRepository = catReportsRepository;
     }
 
     public void catShelterMenu(long chatId) {
@@ -220,11 +236,74 @@ public class CatShelterService {
         notificationService.sendNotification(chatId, shelterInfoText);
     }
 
+    public void savePhotoReport(Update update) {
+        long chatId = update.message().chat().id();
+
+        //Здесь необходимо добавить проверку отчета по дате.
+        // Чтобы отчеты сохранялись в отдельную позицию, а не перезаписывались
+        if (catReportsRepository.findByUserId(chatId) != null) {
+            CatReport catReport = catReportsRepository.findByUserId(chatId);
+            PhotoSize[] photoSizes = update.message().photo();
+            catReport.setDateReport(date);
+            if (photoSizes != null && photoSizes.length > 1) {
+                PhotoSize photoSize = photoSizes[photoSizes.length - 1];
+                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+                if (getFileResponse.isOk()) {
+                    try {
+                        byte[] photo = telegramBot.getFileContent(getFileResponse.file());
+                        catReport.setPhotoPet(photo);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            catReportsRepository.save(catReport);
+            notificationService.sendNotification(update.message().chat().id(), "Ваш отчет зарегистрирован!");
+        } else {
+            CatReport catReport = new CatReport();
+            catReport.setUserId(update.message().chat().id());
+            catReport.setDateReport(date);
+            PhotoSize[] photoSizes = update.message().photo();
+            catReport.setDateReport(date);
+            if (photoSizes != null && photoSizes.length > 1) {
+                PhotoSize photoSize = photoSizes[photoSizes.length - 1];
+                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+                if (getFileResponse.isOk()) {
+                    try {
+                        byte[] photo = telegramBot.getFileContent(getFileResponse.file());
+                        catReport.setPhotoPet(photo);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            catReportsRepository.save(catReport);
+            notificationService.sendNotification(update.message().chat().id(), "Осталось отправить лишь отчет по указанной форме! :)");
+        }
+    }
+
+    public void saveStringReport(Update update) {
+        long chatId = update.message().chat().id();
+        if (catReportsRepository.findByUserId(chatId) != null) {
+            CatReport catReport = catReportsRepository.findByUserId(chatId);
+            catReport.setPetReport(update.message().text());
+            catReportsRepository.save(catReport);
+            notificationService.sendNotification(update.message().chat().id(), "Ваш отчет зарегистрирован!");
+        } else {
+            CatReport catReport = new CatReport();
+            catReport.setUserId(update.message().chat().id());
+            catReport.setPetReport(update.message().text());
+            catReport.setDateReport(date);
+            catReportsRepository.save(catReport);
+            notificationService.sendNotification(update.message().chat().id(), "Осталось отправить лишь фото питомца! :)");
+        }
+    }
     //
     //
     // Methods for RestController
     //
     //
+
     /**
      * Find client by id from cat shelter repository
      *

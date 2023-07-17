@@ -18,7 +18,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     // создаем поле логгер для передачи логов в консоль
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    private static final Pattern PATTERN = Pattern.compile("(\\d+) ([А-я\\d.,!?:\\s]+)");
 
     private final TelegramBot telegramBot;
     private final StepService stepService;
@@ -42,9 +41,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Override
     public int process(List<Update> updates) {
         try {
-            updates.forEach(update -> {
-                stepService.process(update);
-            });
+            updates.forEach(stepService::process);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

@@ -4,6 +4,8 @@ import com.example.shelterforpets.constants.Step;
 import com.example.shelterforpets.service.DogShelterService;
 import com.example.shelterforpets.service.ShelterService;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,8 @@ public class DogMenuService {
                 break;
             case SEND_A_PET_REPORT:
                 dogShelterService.report(chatId);
+                shelterService.backToMenuShelter(chatId, "Отправьте отчет или вернитесь в меню");
+                shelterService.saveClient(chatId, Step.DOG_SHELTER_REPORT_MENU);
                 break;
             default:
                 dogShelterService.messageHelpingVolunteers(chatId, firstName, userName);
@@ -134,6 +138,19 @@ public class DogMenuService {
                     SendMessage sendMessage = new SendMessage(chatId, "Ваши данные успешно сохранены!");
                     telegramBot.execute(sendMessage);
                 }
+        }
+    }
+
+    public void dogShelterReportMenu(Update update) {
+        if (BACK_TO_MENU_SHELTER.equals(update.message().text())) {
+            dogShelterService.dogShelterMenu(update.message().chat().id());
+            shelterService.saveClient(update.message().chat().id(), Step.DOG_SHELTER_MENU);
+        } else {
+            if (update.message().text() != null) {
+                dogShelterService.saveStringReport(update);
+            } else if (update.message().photo() != null) {
+                dogShelterService.savePhotoReport(update);
+            }
         }
     }
 }

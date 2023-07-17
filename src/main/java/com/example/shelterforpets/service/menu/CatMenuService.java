@@ -44,6 +44,8 @@ public class CatMenuService {
                 break;
             case SEND_A_PET_REPORT:
                 catShelterService.report(chatId);
+                shelterService.backToMenuShelter(chatId, "Отправьте отчет или вернитесь в меню");
+                shelterService.saveClient(chatId, Step.CAT_SHELTER_REPORT_MENU);
                 break;
             default:
                 catShelterService.messageHelpingVolunteers(chatId, firstName, userName);
@@ -128,6 +130,19 @@ public class CatMenuService {
                     SendMessage sendMessage = new SendMessage(chatId, "Ваши данные успешно сохранены!");
                     telegramBot.execute(sendMessage);
                 }
+        }
+    }
+
+    public void catShelterReportMenu(Update update) {
+        if (BACK_TO_MENU_SHELTER.equals(update.message().text())) {
+            catShelterService.catShelterMenu(update.message().chat().id());
+            shelterService.saveClient(update.message().chat().id(), Step.CAT_SHELTER_MENU);
+        } else {
+            if (update.message().text() != null) {
+                catShelterService.saveStringReport(update);
+            } else if (update.message().photo() != null){
+                catShelterService.savePhotoReport(update);
+            }
         }
     }
 }

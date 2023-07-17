@@ -56,9 +56,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="petreport" type="TEXT">
-                <constraints nullable="false"/>
             </column>
             <column name="photopet" type="BYTEA">
+            </column>
+            <column name = "datereport" type="TIMESTAMP" >
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -71,9 +72,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="petreport" type="TEXT">
-                <constraints nullable="false"/>
             </column>
             <column name="photopet" type="BYTEA">
+            </column>
+            <column name = "datereport" type="TIMESTAMP" >
                 <constraints nullable="false"/>
             </column>
         </createTable>
