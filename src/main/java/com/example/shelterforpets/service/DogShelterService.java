@@ -1,34 +1,51 @@
 package com.example.shelterforpets.service;
 
+import com.example.shelterforpets.entity.DogReport;
 import com.example.shelterforpets.entity.DogShelterClient;
 import com.example.shelterforpets.repository.ClientRepository;
+import com.example.shelterforpets.repository.DogReportsRepository;
 import com.example.shelterforpets.repository.DogShelterClientRepository;
 import com.example.shelterforpets.repository.VolunteerRepository;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.PhotoSize;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Random;
+
 
 @Service
 public class DogShelterService {
+
+    private final LocalDateTime date = LocalDate.now().atTime(LocalTime.now().getHour(), LocalTime.now().getMinute());
 
     private final TelegramBot telegramBot;
     private final ShelterService shelterService;
     private final VolunteerRepository volunteerRepository;
     private final ClientRepository clientRepository;
     private final DogShelterClientRepository dogShelterClientRepository;
+    private final DogReportsRepository dogReportsRepository;
 
     public DogShelterService(TelegramBot telegramBot,
                              ShelterService shelterService,
                              VolunteerRepository volunteerRepository,
                              ClientRepository clientRepository,
-                             DogShelterClientRepository dogShelterClientRepository) {
+                             DogShelterClientRepository dogShelterClientRepository,
+                             DogReportsRepository dogReportsRepository) {
         this.telegramBot = telegramBot;
         this.shelterService = shelterService;
         this.volunteerRepository = volunteerRepository;
         this.clientRepository = clientRepository;
         this.dogShelterClientRepository = dogShelterClientRepository;
+        this.dogReportsRepository = dogReportsRepository;
+
     }
 
     public void dogShelterMenu(long chatId) {
@@ -254,6 +271,72 @@ public class DogShelterService {
         telegramBot.execute(message);
     }
 
+    public void savePhotoReport(Update update) {
+        if (dogReportsRepository.findAllByUserId(update.message().chat().id()) != null &&
+                dogReportsRepository.findAllByUserId(update.message().chat().id()).getDateReport().isAfter(date.minusDays(1))
+        ) {
+            DogReport dogReport = dogReportsRepository.findAllByUserId(update.message().chat().id());
+            PhotoSize[] photoSizes = update.message().photo();
+            dogReport.setDateReport(date);
+            if (photoSizes != null && photoSizes.length > 1) {
+                PhotoSize photoSize = photoSizes[photoSizes.length - 1];
+                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+                if (getFileResponse.isOk()) {
+                    try {
+                        byte[] photo = telegramBot.getFileContent(getFileResponse.file());
+                        dogReport.setPhotoPet(photo);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            dogReportsRepository.save(dogReport);
+            sendNotification(update.message().chat().id(), "Ваш отчет зарегистрирован!");
+        } else {
+            DogReport dogReport = new DogReport();
+            dogReport.setUserId(update.message().chat().id());
+            dogReport.setDateReport(date);
+            PhotoSize[] photoSizes = update.message().photo();
+            dogReport.setDateReport(date);
+            if (photoSizes != null && photoSizes.length > 1) {
+                PhotoSize photoSize = photoSizes[photoSizes.length - 1];
+                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+                if (getFileResponse.isOk()) {
+                    try {
+                        byte[] photo = telegramBot.getFileContent(getFileResponse.file());
+                        dogReport.setPhotoPet(photo);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            dogReportsRepository.save(dogReport);
+            sendNotification(update.message().chat().id(), "Осталось отправить лишь отчет по указанной форме! :)");
+        }
+    }
+
+    public void saveStringReport(Update update) {
+        if (dogReportsRepository.findAllByUserId(update.message().chat().id()) != null &&
+                dogReportsRepository.findAllByUserId(update.message().chat().id()).getDateReport().isAfter(date.minusDays(1))) {
+            DogReport dogReport = dogReportsRepository.findAllByUserId(update.message().chat().id());
+            dogReport.setPetReport(update.message().text());
+            dogReportsRepository.save(dogReport);
+            sendNotification(update.message().chat().id(), "Ваш отчет зарегистрирован!");
+        } else {
+            DogReport dogReport = new DogReport();
+            dogReport.setUserId(update.message().chat().id());
+            dogReport.setPetReport(update.message().text());
+            dogReport.setDateReport(date);
+            dogReportsRepository.save(dogReport);
+            sendNotification(update.message().chat().id(), "Осталось отправить лишь фото питомца! :)");
+        }
+    }
+    //
+    //
+    // Methods for RestController
+    //
+    //
+
     /**
      * Find client by id from dog shelter repository
      *
@@ -305,5 +388,4 @@ public class DogShelterService {
             dogShelterClientRepository.deleteById(userId);
         }
     }
-
 }

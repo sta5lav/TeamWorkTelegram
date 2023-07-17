@@ -4,6 +4,7 @@ import com.example.shelterforpets.entity.Step;
 import com.example.shelterforpets.service.DogShelterService;
 import com.example.shelterforpets.service.ShelterService;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Service;
@@ -42,12 +43,14 @@ public class DogMenuService {
                 break;
             case SEND_A_PET_REPORT:
                 dogShelterService.report(chatId);
+                shelterService.saveClient(chatId, Step.DOG_SHELTER_REPORT_MENU);
                 break;
             default:
                 dogShelterService.messageHelpingVolunteers(chatId, firstName, userName);
         }
     }
 
+    //Методы для работы с меню информации о приюте
     public void dogShelterInfoMenu(long chatId, String message) {
         Matcher matcher;
         switch (message) {
@@ -87,7 +90,7 @@ public class DogMenuService {
     //Методы для работы с меню приобретения животного
     public void dogShelterConsultantMenu(long chatId, String message) {
         Matcher matcher;
-        switch(message) {
+        switch (message) {
             case RULES_FOR_GETTING_TO_KNOW_AN_ANIMAL:
                 dogShelterService.sendRulesDogShelter(chatId);
                 break;
@@ -133,6 +136,19 @@ public class DogMenuService {
                     SendMessage sendMessage = new SendMessage(chatId, "Ваши данные успешно сохранены!");
                     telegramBot.execute(sendMessage);
                 }
+        }
+    }
+
+    public void dogShelterReportMenu(Update update) {
+        if (update.message().text() != null) {
+            dogShelterMenu(update, update.message().chat().id(), update.message().text());
+        } else {
+            if (update.message().text() != null) {
+
+                dogShelterService.saveStringReport(update);
+            } else {
+                dogShelterService.savePhotoReport(update);
+            }
         }
     }
 }

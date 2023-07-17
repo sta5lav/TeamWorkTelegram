@@ -3,6 +3,7 @@ package com.example.shelterforpets.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -16,10 +17,12 @@ public class CatReport {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "petreport", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "petreport", columnDefinition = "TEXT")
     private String petReport;
 
-    @Column(name = "photopet", columnDefinition = "BYTEA", nullable = false)
+    @Column(name = "photopet", columnDefinition = "BYTEA")
     private byte[] photoPet;
+
+    private LocalDateTime dateReport;
 
 }

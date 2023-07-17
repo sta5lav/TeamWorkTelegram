@@ -5,10 +5,15 @@ import com.example.shelterforpets.listener.TelegramBotUpdatesListener;
 import com.example.shelterforpets.service.menu.CatMenuService;
 import com.example.shelterforpets.service.menu.DogMenuService;
 import com.example.shelterforpets.service.menu.StartMenuService;
+import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class StepService {
@@ -29,42 +34,46 @@ public class StepService {
 
     public void process(Update update) {
         logger.info("Processing update: {}", update);
-
-        long chatId = update.message().chat().id();
-        String message = update.message().text();
-        if (update.message().text() == null) {
-            logger.warn("Skip message because text is null");
-            return;
-        }
-        // Process your updates here
-        if (message.equals("/start")) {
-            shelterService.sendWelcomeMessage(chatId);
-            shelterService.saveClient(chatId, Step.START_MENU);
-            //выбор приюта
-        } else {
-            Step step = shelterService.getStepClient(chatId);
-            switch (step) {
-                case START_MENU:
-                    startMenuService.startMenu(chatId, message);
-                    break;
-                case CAT_SHELTER_MENU:
-                    catMenuService.catShelterMenu(update, chatId, message);
-                    break;
-                case DOG_SHELTER_MENU:
-                    dogMenuService.dogShelterMenu(update, chatId, message);
-                    break;
-                case CAT_SHELTER_INFO_MENU:
-                    catMenuService.catShelterInfoMenu(chatId, message);
-                    break;
-                case DOG_SHELTER_INFO_MENU:
-                    dogMenuService.dogShelterInfoMenu(chatId, message);
-                    break;
-                case CAT_SHELTER_CONSULTATION_MENU:
-                    catMenuService.catShelterConsultantMenu(chatId, message);
-                    break;
-                case DOG_SHELTER_CONSULTATION_MENU:
-                    dogMenuService.dogShelterConsultantMenu(chatId, message);
-                    break;
+        Message chatMessage = update.message();
+        if (chatMessage != null) {
+            long chatId = chatMessage.chat().id();
+            String message = chatMessage.text();
+            // Process your updates here
+            if ("/start".equals(message)) {
+                shelterService.sendWelcomeMessage(chatId);
+                shelterService.saveClient(chatId, Step.START_MENU);
+                //выбор приюта
+            } else {
+                Step step = shelterService.getStepClient(chatId);
+                switch (step) {
+                    case START_MENU:
+                        startMenuService.startMenu(chatId, message);
+                        break;
+                    case CAT_SHELTER_MENU:
+                        catMenuService.catShelterMenu(update, chatId, message);
+                        break;
+                    case DOG_SHELTER_MENU:
+                        dogMenuService.dogShelterMenu(update, chatId, message);
+                        break;
+                    case CAT_SHELTER_INFO_MENU:
+                        catMenuService.catShelterInfoMenu(chatId, message);
+                        break;
+                    case DOG_SHELTER_INFO_MENU:
+                        dogMenuService.dogShelterInfoMenu(chatId, message);
+                        break;
+                    case CAT_SHELTER_CONSULTATION_MENU:
+                        catMenuService.catShelterConsultantMenu(chatId, message);
+                        break;
+                    case DOG_SHELTER_CONSULTATION_MENU:
+                        dogMenuService.dogShelterConsultantMenu(chatId, message);
+                        break;
+                    case DOG_SHELTER_REPORT_MENU:
+                        dogMenuService.dogShelterReportMenu(update);
+                        break;
+                    case CAT_SHELTER_REPORT_MENU:
+                        catMenuService.catShelterReportMenu(update);
+                        break;
+                }
             }
         }
     }

@@ -42,9 +42,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Override
     public int process(List<Update> updates) {
         try {
-            updates.forEach(update -> {
-                stepService.process(update);
-            });
+            updates.forEach(stepService::process);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
