@@ -1,6 +1,6 @@
 package com.example.shelterforpets.service.menu;
 
-import com.example.shelterforpets.entity.Step;
+import com.example.shelterforpets.constants.Step;
 import com.example.shelterforpets.service.DogShelterService;
 import com.example.shelterforpets.service.ShelterService;
 import com.pengrad.telegrambot.TelegramBot;
@@ -45,6 +45,7 @@ public class DogMenuService {
                 break;
             default:
                 dogShelterService.messageHelpingVolunteers(chatId, firstName, userName);
+                shelterService.saveClient(chatId, Step.START_MENU);
         }
     }
 

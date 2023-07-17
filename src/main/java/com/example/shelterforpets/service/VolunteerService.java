@@ -2,6 +2,7 @@ package com.example.shelterforpets.service;
 
 
 import com.example.shelterforpets.entity.Volunteer;
+import com.example.shelterforpets.exceptions.ClientNotFoundException;
 import com.example.shelterforpets.repository.VolunteerRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class VolunteerService {
     public Volunteer findVolunteer(long userId) {
         return volunteerRepository
                 .findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Клиента нет в базе данных!"));
+                .orElseThrow(() -> new ClientNotFoundException("Клиента нет в базе данных!"));
     }
 
     /**
@@ -31,7 +32,7 @@ public class VolunteerService {
      * @return Object Volunteer
      */
     public Volunteer postVolunteer(long userId, Volunteer volunteer) {
-        if (volunteerRepository.existsAllByUserId(userId) == null) {
+        if (volunteerRepository.existsByUserId(userId) == null) {
             volunteer.setUserId(userId);
             return volunteerRepository.save(volunteer);
         } return null;
@@ -44,7 +45,7 @@ public class VolunteerService {
      * @return Object Volunteer
      */
     public Volunteer putVolunteer(long userId, Volunteer volunteer) {
-        if (volunteerRepository.existsAllByUserId(userId) != null) {
+        if (volunteerRepository.existsByUserId(userId) != null) {
             volunteer.setUserId(userId);
             return volunteerRepository.save(volunteer);
         } return null;
@@ -55,7 +56,7 @@ public class VolunteerService {
      * @param userId The ID of the user ID in repository
      */
     public void deleteVolunteer(long userId) {
-        if(volunteerRepository.existsAllByUserId(userId)) {
+        if(volunteerRepository.existsByUserId(userId)) {
             volunteerRepository.deleteById(userId);
         }
     }

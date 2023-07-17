@@ -1,6 +1,6 @@
 package com.example.shelterforpets;
 
-import com.example.shelterforpets.entity.Step;
+import com.example.shelterforpets.constants.Step;
 import com.example.shelterforpets.service.*;
 import com.example.shelterforpets.service.menu.CatMenuService;
 import com.pengrad.telegrambot.TelegramBot;
@@ -122,7 +122,7 @@ public class CatMenuServiceTests {
     @Test
     public void testCatShelterInfoMenu_ChooseNameAndPhoneNumberPattern() {
         long chatId = 1238L;
-        String message = "Принять и записать контактные данные для связи";
+        String message = "Записать контактные данные для связи";
 
         catMenuService.catShelterInfoMenu(chatId, message);
 
@@ -158,6 +158,110 @@ public class CatMenuServiceTests {
         String phoneNumber = "88005553535";
 
         catMenuService.catShelterInfoMenu(chatId, message);
+
+        verify(catShelterService).saveCatShelterClientNameAndPhoneNumber(chatId, name, phoneNumber);
+        verify(telegramBot).execute(any(SendMessage.class));
+    }
+
+    @Test
+    public void testCatShelterConsultantMenu_ChooseRulesForGettingToKnowAnAnimal() {
+        long chatId = 1238L;
+        String message = "Правила знакомства с животным до того, как забрать его из приюта";
+
+        catMenuService.catShelterConsultantMenu(chatId, message);
+
+        verify(catShelterService).sendRulesCatShelter(chatId);
+    }
+
+    @Test
+    public void testCatShelterConsultantMenu_ChooseAListOfDocumentsRequiredToTakeAnAnimal() {
+        long chatId = 1238L;
+        String message = "Список документов, необходимых для того, чтобы взять животное из приюта";
+
+        catMenuService.catShelterConsultantMenu(chatId, message);
+
+        verify(catShelterService).sendDocumentsCatShelter(chatId);
+    }
+
+    @Test
+    public void testCatShelterConsultantMenu_ChooseListOfRecommendationsForTransportingAnAnimal() {
+        long chatId = 1238L;
+        String message = "Список рекомендаций по транспортировке животного";
+
+        catMenuService.catShelterConsultantMenu(chatId, message);
+
+        verify(catShelterService).sendRecommendationsForTransportingCats(chatId);
+    }
+
+    @Test
+    public void testCatShelterConsultantMenu_ChooseHomeImprovementForAKitten() {
+        long chatId = 1238L;
+        String message = "Список рекомендаций по обустройству дома для котенка";
+
+        catMenuService.catShelterConsultantMenu(chatId, message);
+
+        verify(catShelterService).sendRecommendationsForImprovementsKitten(chatId);
+    }
+
+    @Test
+    public void testCatShelterConsultantMenu_ChooseHomeImprovementForAnAdultAnimal() {
+        long chatId = 1238L;
+        String message = "Список рекомендаций по обустройству дома для взрослого животного";
+
+        catMenuService.catShelterConsultantMenu(chatId, message);
+
+        verify(catShelterService).sendRecommendationsForImprovementsAdultCats(chatId);
+    }
+
+    @Test
+    public void testCatShelterConsultantMenu_ChooseHomeImprovementForAnAnimalWithDisabilities() {
+        long chatId = 1238L;
+        String message = "Обустройство дома для животного с ограниченными возможностями (зрение, передвижение)";
+
+        catMenuService.catShelterConsultantMenu(chatId, message);
+
+        verify(catShelterService).sendRecommendationsForImprovementsAdultCatsWithDisabilities(chatId);
+    }
+
+    @Test
+    public void testCatShelterConsultantMenu_ChooseRecordContactDetailsForCommunication() {
+        long chatId = 1238L;
+        String message = "Записать контактные данные для связи";
+
+        catMenuService.catShelterConsultantMenu(chatId, message);
+
+        verify(catShelterService).nameAndPhoneNumberPattern(chatId);
+    }
+
+    @Test
+    public void testCatShelterConsultantMenu_ChooseCallAVolunteer() {
+        long chatId = 1238L;
+        String message = "Позвать волонтера";
+
+        catMenuService.catShelterConsultantMenu(chatId, message);
+
+        verify(catShelterService).getHelpingCatShelterVolunteers(chatId);
+    }
+
+    @Test
+    public void testCatShelterConsultantMenu_ChooseBackToMenuShelter() {
+        long chatId = 1238L;
+        String message = "Вернуться в меню приюта";
+
+        catMenuService.catShelterConsultantMenu(chatId, message);
+
+        verify(catShelterService).catShelterMenu(chatId);
+        verify(shelterService).saveClient(chatId, Step.CAT_SHELTER_MENU);
+    }
+
+    @Test
+    public void testCatShelterConsultantMenu_SaveCatShelterClientNameAndPhoneNumber() {
+        long chatId = 1238L;
+        String message = "88005553535 Андрей";
+        String name = "Андрей";
+        String phoneNumber = "88005553535";
+
+        catMenuService.catShelterConsultantMenu(chatId, message);
 
         verify(catShelterService).saveCatShelterClientNameAndPhoneNumber(chatId, name, phoneNumber);
         verify(telegramBot).execute(any(SendMessage.class));

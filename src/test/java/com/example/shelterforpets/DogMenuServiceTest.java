@@ -1,6 +1,6 @@
 package com.example.shelterforpets;
 
-import com.example.shelterforpets.entity.Step;
+import com.example.shelterforpets.constants.Step;
 import com.example.shelterforpets.service.*;
 import com.example.shelterforpets.service.menu.DogMenuService;
 import com.pengrad.telegrambot.TelegramBot;
@@ -122,14 +122,13 @@ public class DogMenuServiceTest {
     @Test
     public void testDogShelterInfoMenu_ChooseNameAndPhoneNumberPattern() {
         long chatId = 1238L;
-        String message = "Принять и записать контактные данные для связи";
+        String message = "Записать контактные данные для связи";
 
         dogMenuService.dogShelterInfoMenu(chatId, message);
 
         verify(dogShelterService).nameAndPhoneNumberPattern(chatId);
     }
 
-    /*
     @Test
     public void testDogShelterInfoMenu_ChooseGetHelpingVolunteers() {
         long chatId = 1238L;
@@ -139,7 +138,6 @@ public class DogMenuServiceTest {
 
         verify(dogShelterService).getHelpingDogShelterVolunteers(chatId);
     }
-     */
 
     @Test
     public void testDogShelterInfoMenu_ChooseReturnToMenu() {
@@ -160,6 +158,140 @@ public class DogMenuServiceTest {
         String phoneNumber = "88005553535";
 
         dogMenuService.dogShelterInfoMenu(chatId, message);
+
+        verify(dogShelterService).saveDogShelterClientNameAndPhoneNumber(chatId, name, phoneNumber);
+        verify(telegramBot).execute(any(SendMessage.class));
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseRulesForGettingToKnowAnAnimal() {
+        long chatId = 1238L;
+        String message = "Правила знакомства с животным до того, как забрать его из приюта";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).sendRulesDogShelter(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseAListOfDocumentsRequiredToTakeAnAnimal() {
+        long chatId = 1238L;
+        String message = "Список документов, необходимых для того, чтобы взять животное из приюта";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).sendDocumentsDogShelter(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseListOfRecommendationsForTransportingAnAnimal() {
+        long chatId = 1238L;
+        String message = "Список рекомендаций по транспортировке животного";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).sendRecommendationsForTransportingDogs(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseHomeImprovementForAPuppy() {
+        long chatId = 1238L;
+        String message = "Список рекомендаций по обустройству дома для щенка";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).sendRecommendationsForImprovementsPuppy(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseHomeImprovementForAnAdultAnimal() {
+        long chatId = 1238L;
+        String message = "Список рекомендаций по обустройству дома для взрослого животного";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).sendRecommendationsForImprovementsAdultDogs(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseHomeImprovementForAnAnimalWithDisabilities() {
+        long chatId = 1238L;
+        String message = "Обустройство дома для животного с ограниченными возможностями (зрение, передвижение)";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).sendRecommendationsForImprovementsAdultDogsWithDisabilities(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseGiveAdviceToADogHandlerOnPrimaryCommunicationWithADog() {
+        long chatId = 1238L;
+        String message = "Советы кинолога по первичному общению с собакой";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).adviceToADogHandlerOnPrimaryCommunicationWithADog(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseGiveRecommendationsOnTheCheckedDogHandlers() {
+        long chatId = 1238L;
+        String message = "Рекомендации по проверенным кинологам для дальнейшего обращения к ним";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).recommendationOnTheCheckedDogHandler(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseRecordContactDetailsForCommunication() {
+        long chatId = 1238L;
+        String message = "Записать контактные данные для связи";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).nameAndPhoneNumberPattern(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseReasonsWhyTheyMayRefuseAndNotLetYouTakeTheDog() {
+        long chatId = 1238L;
+        String message = "Список причин, почему могут отказать и не дать забрать собаку из приюта";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).reasonsWhyTheyMayRefuseAndNotLetYouTakeTheDog(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseCallAVolunteer() {
+        long chatId = 1238L;
+        String message = "Позвать волонтера";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).getHelpingDogShelterVolunteers(chatId);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_ChooseBackToMenuShelter() {
+        long chatId = 1238L;
+        String message = "Вернуться в меню приюта";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
+
+        verify(dogShelterService).dogShelterMenu(chatId);
+        verify(shelterService).saveClient(chatId, Step.DOG_SHELTER_MENU);
+    }
+
+    @Test
+    public void testDogShelterConsultantMenu_SaveDogShelterClientNameAndPhoneNumber() {
+        long chatId = 1238L;
+        String message = "88005553535 Андрей";
+        String name = "Андрей";
+        String phoneNumber = "88005553535";
+
+        dogMenuService.dogShelterConsultantMenu(chatId, message);
 
         verify(dogShelterService).saveDogShelterClientNameAndPhoneNumber(chatId, name, phoneNumber);
         verify(telegramBot).execute(any(SendMessage.class));

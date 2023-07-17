@@ -1,6 +1,6 @@
 package com.example.shelterforpets.service;
 
-import com.example.shelterforpets.entity.Step;
+import com.example.shelterforpets.constants.Step;
 import com.example.shelterforpets.listener.TelegramBotUpdatesListener;
 import com.example.shelterforpets.service.menu.CatMenuService;
 import com.example.shelterforpets.service.menu.DogMenuService;
@@ -38,7 +38,9 @@ public class StepService {
         }
         // Process your updates here
         if (message.equals("/start")) {
-            shelterService.sendWelcomeMessage(chatId);
+            //shelterService.sendWelcomeMessage(chatId);
+            shelterService.sendShelterMenu(chatId, "Привет! Я бот, и я готов помочь Вам." +
+                    " Какой приют Вас интересует?");
             shelterService.saveClient(chatId, Step.START_MENU);
             //выбор приюта
         } else {

@@ -12,7 +12,7 @@ public class Constants {
    public static final String RECOMMENDATION_OF_SAFETY =
            "Общие рекомендации о технике безопасности на территории приюта";
    public static final String RECORD_CONTACT_DETAILS_FOR_COMMUNICATION =
-           "Принять и записать контактные данные для связи";
+           "Записать контактные данные для связи";
    public static final String CALL_A_VOLUNTEER = "Позвать волонтера";
    public static final String BACK_TO_MENU_SHELTER = "Вернуться в меню приюта";
 
@@ -29,18 +29,18 @@ public class Constants {
    public static final String HOME_IMPROVEMENT_FOR_A_KITTEN =
            "Список рекомендаций по обустройству дома для котенка";
    public static final String HOME_IMPROVEMENT_FOR_AN_ADULT_ANIMAL =
-           "Выдать список рекомендаций по обустройству дома для взрослого животного";
+           "Список рекомендаций по обустройству дома для взрослого животного";
    public static final String HOME_IMPROVEMENT_FOR_AN_ANIMAL_WITH_DISABILITIES =
            "Обустройство дома для животного с " +
                    "ограниченными возможностями (зрение, передвижение)";
    public static final String HOME_IMPROVEMENT_FOR_A_PUPPY =
            "Список рекомендаций по обустройству дома для щенка";
    public static final String GIVE_ADVICE_TO_A_DOG_HANDLER_ON_PRIMARY_COMMUNICATION_WITH_A_DOG =
-           "Выдать советы кинолога по первичному общению с собакой";
+           "Советы кинолога по первичному общению с собакой";
    public static final String GIVE_RECOMMENDATIONS_ON_THE_CHECKED_DOG_HANDLERS =
-           "Выдать рекомендации по проверенным кинологам для дальнейшего обращения к ним";
+           "Рекомендации по проверенным кинологам для дальнейшего обращения к ним";
    public static final String REASONS_WHY_THEY_MAY_REFUSE_AND_NOT_LET_YOU_TAKE_THE_DOG =
-           "Выдать список причин, почему могут отказать и не дать забрать собаку из приюта";
+           "Список причин, почему могут отказать и не дать забрать собаку из приюта";
 
 
 

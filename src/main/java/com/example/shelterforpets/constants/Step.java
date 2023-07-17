@@ -1,4 +1,4 @@
-package com.example.shelterforpets.entity;
+package com.example.shelterforpets.constants;
 
 public enum Step {
     START_MENU,

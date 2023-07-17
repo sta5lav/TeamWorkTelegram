@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
-    Client findAllByUserId(long chatId);
+    Client findByUserId(long chatId);
 
-    Boolean existsAllByUserId(long chatId);
+    Boolean existsByUserId(long chatId);
 }
