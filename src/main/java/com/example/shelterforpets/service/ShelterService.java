@@ -10,6 +10,7 @@ import com.example.shelterforpets.repository.*;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.Keyboard;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class ShelterService {
                 .oneTimeKeyboard(false)   // optional
                 .resizeKeyboard(false)    // optional
                 .selective(true);        // optional
-        notificationService.sendNotificationWithMenu(chatId,text, replyKeyboardMarkup);
+        notificationService.sendNotificationWithMenu(chatId, text, replyKeyboardMarkup);
     }
 
     public void clientAdoptionInstructionsForCatShelter(long chatId) {
@@ -82,7 +83,7 @@ public class ShelterService {
                 .oneTimeKeyboard(false)   // optional
                 .resizeKeyboard(false)    // optional
                 .selective(true);        // optional
-        notificationService.sendNotificationWithMenu(chatId,text, replyKeyboardMarkup);
+        notificationService.sendNotificationWithMenu(chatId, text, replyKeyboardMarkup);
     }
 
     public void clientAdoptionInstructionsForDogShelter(long chatId) {
@@ -102,8 +103,20 @@ public class ShelterService {
                 .oneTimeKeyboard(false)   // optional
                 .resizeKeyboard(true)    // optional
                 .selective(true);        // optional
-        notificationService.sendNotificationWithMenu(chatId,text, replyKeyboardMarkup);
+        notificationService.sendNotificationWithMenu(chatId, text, replyKeyboardMarkup);
     }
+
+    public void backToMenuShelter(long chatId, String text) {
+        Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                BACK_TO_MENU_SHELTER)
+                .oneTimeKeyboard(false)   // optional
+                .resizeKeyboard(true)    // optional
+                .selective(true);        // optional
+        SendMessage message = new SendMessage(chatId, text);
+        message.replyMarkup(replyKeyboardMarkup);
+        telegramBot.execute(message);
+    }
+
 
     //Сохранение контактных данных для связи с клиентом
 
@@ -212,8 +225,13 @@ public class ShelterService {
      * @param chatId The ID of the chat to send the pet report notification to.
      */
     public void sendPetReport(long chatId) {
-        String petReportText = "Прислать отчет о питомце:\n" +
-                "Для отправки отчета, пожалуйста, заполните форму на нашем сайте.";
+        String petReportText = "Прислать отчет необходимо по следующей форме: \n" +
+                "1. Фотография питомца; \n" +
+                "2. В одном сообщении указать рацион животного, общее самочувствие " +
+                "и привыкание к новому месту и необходимо указать изменения в поведении:" +
+                " отказ от старых привычек, приобретение новых. \n" +
+                "После того, как Вы отправите отчет, волонтеры его проверят и свящутся с Вами, " +
+                "если будут замечания";
         notificationService.sendNotification(chatId, petReportText);
     }
 
