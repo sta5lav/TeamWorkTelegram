@@ -1,5 +1,6 @@
 package com.example.shelterforpets.service;
 
+import com.example.shelterforpets.constants.Status;
 import com.example.shelterforpets.entity.CatReport;
 import com.example.shelterforpets.entity.CatShelterClient;
 import com.example.shelterforpets.exceptions.ClientNotFoundException;
@@ -18,13 +19,20 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+
 
 @Service
 public class CatShelterService {
 
     private final LocalDateTime date = LocalDate.now()
             .atTime(LocalTime.now().getHour(),LocalTime.now().getMinute());
+
+    private final LocalDateTime dateStartDay = LocalDate.now().atTime(0, 0);
+    private final LocalDateTime dateEndDay = LocalDate.now().atTime(23, 59,59);
 
     private final TelegramBot telegramBot;
     private final ShelterService shelterService;
@@ -238,65 +246,103 @@ public class CatShelterService {
 
     public void savePhotoReport(Update update) {
         long chatId = update.message().chat().id();
-
-        //Здесь необходимо добавить проверку отчета по дате.
-        // Чтобы отчеты сохранялись в отдельную позицию, а не перезаписывались
-        if (catReportsRepository.findByUserId(chatId) != null) {
-            CatReport catReport = catReportsRepository.findByUserId(chatId);
-            PhotoSize[] photoSizes = update.message().photo();
-            catReport.setDateReport(date);
-            if (photoSizes != null && photoSizes.length > 1) {
-                PhotoSize photoSize = photoSizes[photoSizes.length - 1];
-                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
-                if (getFileResponse.isOk()) {
-                    try {
-                        byte[] photo = telegramBot.getFileContent(getFileResponse.file());
-                        catReport.setPhotoPet(photo);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+        if(checkReport(update) && catReportsRepository.findByUserId(chatId).getPhotoPet() == null) {
+                CatReport catReport = catReportsRepository.findByUserId(chatId);
+                PhotoSize[] photoSizes = update.message().photo();
+                catReport.setDateReport(date);
+                if (photoSizes != null && photoSizes.length > 1) {
+                    PhotoSize photoSize = photoSizes[photoSizes.length - 1];
+                    GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+                    if (getFileResponse.isOk()) {
+                        try {
+                            byte[] photo = telegramBot.getFileContent(getFileResponse.file());
+                            catReport.setPhotoPet(photo);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
-            }
-            catReportsRepository.save(catReport);
-            notificationService.sendNotification(update.message().chat().id(), "Ваш отчет зарегистрирован!");
-        } else {
-            CatReport catReport = new CatReport();
-            catReport.setUserId(update.message().chat().id());
-            catReport.setDateReport(date);
-            PhotoSize[] photoSizes = update.message().photo();
-            catReport.setDateReport(date);
-            if (photoSizes != null && photoSizes.length > 1) {
-                PhotoSize photoSize = photoSizes[photoSizes.length - 1];
-                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
-                if (getFileResponse.isOk()) {
-                    try {
-                        byte[] photo = telegramBot.getFileContent(getFileResponse.file());
-                        catReport.setPhotoPet(photo);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                catReportsRepository.save(catReport);
+                notificationService.sendNotification(update.message().chat().id(),
+                        "Ваш отчет зарегистрирован!");
+            } else if(!checkReport(update)){
+                CatReport catReport = new CatReport();
+                catReport.setUserId(update.message().chat().id());
+                catReport.setDateReport(date);
+                PhotoSize[] photoSizes = update.message().photo();
+                catReport.setDateReport(date);
+                if (photoSizes != null && photoSizes.length > 1) {
+                    PhotoSize photoSize = photoSizes[photoSizes.length - 1];
+                    GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+                    if (getFileResponse.isOk()) {
+                        try {
+                            byte[] photo = telegramBot.getFileContent(getFileResponse.file());
+                            catReport.setPhotoPet(photo);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
-            }
-            catReportsRepository.save(catReport);
-            notificationService.sendNotification(update.message().chat().id(), "Осталось отправить лишь отчет по указанной форме! :)");
+                catReportsRepository.save(catReport);
+                notificationService.sendNotification(update.message().chat().id(),
+                        "Осталось отправить лишь отчет по указанной форме! :)");
+            } else {
+            notificationService.sendNotification(update.message().chat().id(),
+                    "Вы уже отправляли отчет за прошедшие сутки!");
         }
+
     }
 
     public void saveStringReport(Update update) {
         long chatId = update.message().chat().id();
-        if (catReportsRepository.findByUserId(chatId) != null) {
-            CatReport catReport = catReportsRepository.findByUserId(chatId);
-            catReport.setPetReport(update.message().text());
-            catReportsRepository.save(catReport);
-            notificationService.sendNotification(update.message().chat().id(), "Ваш отчет зарегистрирован!");
-        } else {
-            CatReport catReport = new CatReport();
-            catReport.setUserId(update.message().chat().id());
-            catReport.setPetReport(update.message().text());
-            catReport.setDateReport(date);
-            catReportsRepository.save(catReport);
-            notificationService.sendNotification(update.message().chat().id(), "Осталось отправить лишь фото питомца! :)");
+        if(checkReport(update) && catReportsRepository.findByUserId(chatId).getPetReport() == null) {
+            if (catReportsRepository.findByUserId(chatId) != null) {
+                CatReport catReport = catReportsRepository.findByUserId(chatId);
+                catReport.setPetReport(update.message().text());
+                catReportsRepository.save(catReport);
+                notificationService.sendNotification(update.message().chat().id(),
+                        "Ваш отчет зарегистрирован!");
+            } else if(checkReport(update)){
+                CatReport catReport = new CatReport();
+                catReport.setUserId(update.message().chat().id());
+                catReport.setPetReport(update.message().text());
+                catReport.setDateReport(date);
+                catReportsRepository.save(catReport);
+                notificationService.sendNotification(update.message().chat().id(),
+                        "Осталось отправить лишь фото питомца! :)");
+            }
+            else {
+                notificationService.sendNotification(update.message().chat().id(),
+                        "Вы уже отправляли отчет за прошедшие сутки!");
+            }
         }
+    }
+
+
+
+    private boolean checkReport(Update update) {
+        long chatId = update.message().chat().id();
+        List<CatReport> catReports = catReportsRepository.findAllByUserId(chatId);
+        boolean result = false;
+        for (CatReport report : catReports) {
+            LocalDateTime dateReport = report.getDateReport();
+            if (dateReport.isAfter(dateStartDay) && dateReport.isBefore(dateEndDay)) {
+                result = true;
+            }
+        }
+        return  result;
+    }
+
+    public void findClientsWithAnOverdueDateOfReports() {
+        Collection<CatReport> catReports = catReportsRepository.
+                findAll().
+                stream().
+                filter(dogReport -> dogReport.getDateReport().isBefore(date.minusDays(2))).
+                collect(Collectors.toList());
+        catReports.forEach(dogReport -> notificationService.
+                sendNotification(volunteerRepository.findVolunteerByName("НиколайВолонтер"), //Name Volunteer for example,
+                        "Пользователь " + dogReport.getUserId() +
+                                " плохо заполняет отчет о животном"));
     }
     //
     //
@@ -339,8 +385,31 @@ public class CatShelterService {
      */
     public CatShelterClient putClientFromCatShelter(long userId, CatShelterClient catShelterClient) {
         if (catShelterClientRepository.existsByUserId(userId)) {
-            catShelterClient.setUserId(userId);
-            return catShelterClientRepository.save(catShelterClient);
+            CatShelterClient client = catShelterClientRepository.findCatShelterClientByUserId(userId);
+            client.setName(catShelterClient.getName());
+            client.setStatus(catShelterClient.getStatus());
+            client.setNickNamePet(catShelterClient.getNickNamePet());
+            client.setPhoneNumber(catShelterClient.getPhoneNumber());
+            Status status = catShelterClient.getStatus();
+            switch (status) {
+                case ADDITIONAL_PROBATION_SMALL:
+                    notificationService.sendNotification(userId,
+                            "Вам назначено дополнительное время испытательного срока (14 дней)");
+                    break;
+                case ADDITIONAL_PROBATION_LARGE:
+                    notificationService.sendNotification(userId,
+                            "Вам назначено дополнительное время испытательного срока (30 дней)");
+                    break;
+                case SUCCESS_PROBATION:
+                    notificationService.sendNotification(userId,
+                            "Вы прошли испытательный срок! Поздравляю!");
+                    break;
+                case NOT_PASS_PROBATION:
+                    notificationService.sendNotification(userId,
+                            "К сожалению, Вы не прошли испытательный срок! С вами свяжется волонтер!");
+                    break;
+            }
+            return catShelterClientRepository.save(client);
         }
         return null;
     }

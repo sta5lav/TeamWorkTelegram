@@ -84,7 +84,7 @@ public class DogShelterController {
             tags = "Сервис для работы с клиентами приюта для собак"
     )
     @PutMapping(value = "/{id}")
-    public DogShelterClient putClientFromDogShelter(@PathVariable long userId,
+    public DogShelterClient putClientFromDogShelter(@PathVariable("id") long userId,
                                                     @RequestBody DogShelterClient dogShelterClient) {
         return dogShelterService.putClientFromDogShelter(userId, dogShelterClient);
     }

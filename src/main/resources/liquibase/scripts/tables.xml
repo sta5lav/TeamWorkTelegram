@@ -31,6 +31,8 @@
             </column>
             <column name="nicknamepet" type="TEXT">
             </column>
+            <column name="status" type="TEXT">
+            </column>
         </createTable>
 
         <createTable tableName="dog_shelter_client">
@@ -45,6 +47,8 @@
             <column name="phonenumber" type="TEXT">
             </column>
             <column name="nicknamepet" type="TEXT">
+            </column>
+            <column name="status" type="TEXT">
             </column>
         </createTable>
 

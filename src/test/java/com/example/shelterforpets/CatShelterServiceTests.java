@@ -291,10 +291,17 @@ public class CatShelterServiceTests {
     public void testPutClientFromCatShelter() {
         long userId = 123456L;
         CatShelterClient catShelterClient = new CatShelterClient();
+        catShelterClient.setId(1L);
         catShelterClient.setUserId(userId);
+        catShelterClient.setNickNamePet("example");
+        catShelterClient.setName("example");
+        catShelterClient.setPhoneNumber("example");
+
 
         when(catShelterClientRepository.existsByUserId(userId)).thenReturn(true);
         when(catShelterClientRepository.save(catShelterClient)).thenReturn(catShelterClient);
+
+        catShelterClientRepository.save(catShelterClient);
 
         CatShelterClient result = catShelterService.putClientFromCatShelter(userId, catShelterClient);
 

@@ -1,6 +1,5 @@
 package com.example.shelterforpets;
 
-import com.example.shelterforpets.entity.CatShelterClient;
 import com.example.shelterforpets.entity.DogShelterClient;
 import com.example.shelterforpets.repository.ClientRepository;
 import com.example.shelterforpets.repository.DogReportsRepository;

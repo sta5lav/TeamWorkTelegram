@@ -1,5 +1,6 @@
 package com.example.shelterforpets.service;
 
+import com.example.shelterforpets.constants.Status;
 import com.example.shelterforpets.entity.DogReport;
 import com.example.shelterforpets.entity.DogShelterClient;
 import com.example.shelterforpets.exceptions.ClientNotFoundException;
@@ -18,13 +19,21 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+
 
 @Service
 public class DogShelterService {
 
     private final LocalDateTime date = LocalDate.now()
-            .atTime(LocalTime.now().getHour(),LocalTime.now().getMinute());
+            .atTime(LocalTime.now().getHour(), LocalTime.now().getMinute());
+
+
+    private final LocalDateTime dateStartDay = LocalDate.now().atTime(0, 0);
+    private final LocalDateTime dateEndDay = LocalDate.now().atTime(23, 59, 59);
 
     private final TelegramBot telegramBot;
     private final ShelterService shelterService;
@@ -266,10 +275,7 @@ public class DogShelterService {
 
     public void savePhotoReport(Update update) {
         long chatId = update.message().chat().id();
-        //Здесь необходимо добавить проверку отчета по дате.
-        // Чтобы отчеты сохранялись в отдельную позицию, а не перезаписывались
-        if (dogReportsRepository.findByUserId(chatId) != null &&
-                dogReportsRepository.findByUserId(chatId).getPetReport() != null) {
+        if (checkReport(update) && dogReportsRepository.findByUserId(chatId).getPhotoPet() == null) {
             DogReport dogReport = dogReportsRepository.findByUserId(chatId);
             PhotoSize[] photoSizes = update.message().photo();
             if (photoSizes != null && photoSizes.length > 1) {
@@ -283,10 +289,11 @@ public class DogShelterService {
                         throw new RuntimeException(e);
                     }
                 }
+                dogReportsRepository.save(dogReport);
+                notificationService.sendNotification(update.message().chat().id(),
+                        "Ваш отчет зарегистрирован!");
             }
-            dogReportsRepository.save(dogReport);
-            notificationService.sendNotification(update.message().chat().id(), "Ваш отчет зарегистрирован!");
-        } else {
+        } else if (!checkReport(update)) {
             DogReport dogReport = new DogReport();
             dogReport.setUserId(update.message().chat().id());
             dogReport.setDateReport(date);
@@ -305,27 +312,71 @@ public class DogShelterService {
                 }
             }
             dogReportsRepository.save(dogReport);
-            notificationService.sendNotification(update.message().chat().id(), "Осталось отправить лишь отчет по указанной форме! :)");
+            notificationService.sendNotification(update.message().chat().id(),
+                    "Осталось отправить лишь отчет по указанной форме! :)");
+        } else {
+            notificationService.sendNotification(update.message().chat().id(),
+                    "Вы уже отправляли отчет за прошедшие сутки!");
         }
+
     }
 
     public void saveStringReport(Update update) {
         long chatId = update.message().chat().id();
-        if (dogReportsRepository.findByUserId(chatId) != null &&
-                dogReportsRepository.findByUserId(chatId).getDateReport() != null) {
+        if (checkReport(update) && dogReportsRepository.findByUserId(chatId).getPetReport() == null) {
             DogReport dogReport = dogReportsRepository.findByUserId(chatId);
             dogReport.setPetReport(update.message().text());
             dogReportsRepository.save(dogReport);
-            notificationService.sendNotification(update.message().chat().id(), "Ваш отчет зарегистрирован!");
-        } else {
+            notificationService.sendNotification(update.message().chat().id(),
+                    "Ваш отчет зарегистрирован!");
+        } else if (!checkReport(update)) {
             DogReport dogReport = new DogReport();
             dogReport.setUserId(update.message().chat().id());
             dogReport.setPetReport(update.message().text());
             dogReport.setDateReport(date);
             dogReportsRepository.save(dogReport);
-            notificationService.sendNotification(update.message().chat().id(), "Осталось отправить лишь фото питомца! :)");
+            notificationService.sendNotification(update.message().chat().id(),
+                    "Осталось отправить лишь фото питомца! :)");
+        } else {
+            notificationService.sendNotification(update.message().chat().id(),
+                    "Вы уже отправляли отчет за прошедшие сутки!");
         }
     }
+
+    private boolean checkReport(Update update) {
+        long chatId = update.message().chat().id();
+        List<DogReport> catReports = dogReportsRepository.findAllByUserId(chatId);
+        boolean result = false;
+        for (DogReport report : catReports) {
+            LocalDateTime dateReport = report.getDateReport();
+            if (dateReport.isAfter(dateStartDay) && dateReport.isBefore(dateEndDay)) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+
+
+    public void findClientsWithAnOverdueDateOfReports() {
+        Collection<DogReport> dogReports = dogReportsRepository.
+                findAll().
+                stream().
+                filter(dogReport -> dogReport.getDateReport().isBefore(date.minusDays(2))).
+                collect(Collectors.toList());
+        dogReports.forEach(dogReport ->notificationService.
+                sendNotification(volunteerRepository.findVolunteerByName("НиколайВолонтер"), //Name Volunteer for example,
+                        "Пользователь " + dogReport.getUserId() +
+                                " плохо заполняет отчет о животном"));
+    }
+
+
+    //
+    //
+    // Methods for RestController
+    //
+    //
+
     /**
      * Find client by id from dog shelter repository
      *
@@ -361,8 +412,31 @@ public class DogShelterService {
      */
     public DogShelterClient putClientFromDogShelter(long userId, DogShelterClient dogShelterClient) {
         if (dogShelterClientRepository.existsByUserId(userId)) {
-            dogShelterClient.setUserId(userId);
-            return dogShelterClientRepository.save(dogShelterClient);
+            DogShelterClient client = dogShelterClientRepository.findDogShelterClientByUserId(userId);
+            client.setName(dogShelterClient.getName());
+            client.setStatus(dogShelterClient.getStatus());
+            client.setNickNamePet(dogShelterClient.getNickNamePet());
+            client.setPhoneNumber(dogShelterClient.getPhoneNumber());
+            Status status = dogShelterClient.getStatus();
+            switch (status) {
+                case ADDITIONAL_PROBATION_SMALL:
+                    notificationService.sendNotification(userId,
+                            "Вам назначено дополнительное время испытательного срока (14 дней)");
+                    break;
+                case ADDITIONAL_PROBATION_LARGE:
+                    notificationService.sendNotification(userId,
+                            "Вам назначено дополнительное время испытательного срока (30 дней)");
+                    break;
+                case SUCCESS_PROBATION:
+                    notificationService.sendNotification(userId,
+                            "Вы прошли испытательный срок! Поздравляю!");
+                    break;
+                case NOT_PASS_PROBATION:
+                    notificationService.sendNotification(userId,
+                            "К сожалению, Вы не прошли испытательный срок! С вами свяжется волонтер!");
+                    break;
+            }
+            return dogShelterClientRepository.save(client);
         }
         return null;
     }
