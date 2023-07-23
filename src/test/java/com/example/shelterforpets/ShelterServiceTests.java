@@ -166,7 +166,13 @@ public class ShelterServiceTests {
         long chatId = 1238L;
         shelterService.sendPetReport(chatId);
 
-        String expectedPetReportText = "Прислать отчет о питомце:\nДля отправки отчета, пожалуйста, заполните форму на нашем сайте.";
+        String expectedPetReportText = "Прислать отчет необходимо по следующей форме: \n" +
+                "1. Фотография питомца; \n" +
+                "2. В одном сообщении указать рацион животного, общее самочувствие " +
+                "и привыкание к новому месту и необходимо указать изменения в поведении:" +
+                " отказ от старых привычек, приобретение новых. \n" +
+                "После того, как Вы отправите отчет, волонтеры его проверят и свящутся с Вами, " +
+                "если будут замечания";
         verify(notificationService).sendNotification(chatId, expectedPetReportText);
     }
 

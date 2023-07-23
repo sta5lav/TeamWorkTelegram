@@ -1,18 +1,29 @@
 package com.example.shelterforpets.service;
 
 
+import com.example.shelterforpets.entity.Client;
 import com.example.shelterforpets.entity.Volunteer;
 import com.example.shelterforpets.exceptions.ClientNotFoundException;
 import com.example.shelterforpets.repository.VolunteerRepository;
 import org.springframework.stereotype.Service;
 
+import static com.example.shelterforpets.constants.Constants.CLIENT_WITH_OVERDUE_DATE_OF_REPORTS;
+
 @Service
 public class VolunteerService {
 
-    private VolunteerRepository volunteerRepository;
+    private final VolunteerRepository volunteerRepository;
 
-    public VolunteerService(VolunteerRepository volunteerRepository) {
+    private final NotificationService notificationService;
+
+    public VolunteerService(VolunteerRepository volunteerRepository,
+                            NotificationService notificationService) {
         this.volunteerRepository = volunteerRepository;
+        this.notificationService = notificationService;
+    }
+
+    public void sendMessageFromUserWithOverdueDateOfReports(Long chatId) {
+        notificationService.sendNotification(chatId, CLIENT_WITH_OVERDUE_DATE_OF_REPORTS);
     }
 
     /**

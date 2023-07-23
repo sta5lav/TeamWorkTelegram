@@ -1,5 +1,6 @@
 package com.example.shelterforpets.entity;
 
+import com.example.shelterforpets.constants.Status;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ public class CatShelterClient {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "name", columnDefinition = "TEXT")
     private String name;
 
     @Column(name = "phonenumber", columnDefinition = "TEXT")
@@ -24,5 +25,9 @@ public class CatShelterClient {
 
     @Column(name = "nicknamepet", columnDefinition = "TEXT")
     private String nickNamePet;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
 }

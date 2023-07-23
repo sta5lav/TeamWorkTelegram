@@ -42,6 +42,11 @@ public class Constants {
    public static final String REASONS_WHY_THEY_MAY_REFUSE_AND_NOT_LET_YOU_TAKE_THE_DOG =
            "Список причин, почему могут отказать и не дать забрать собаку из приюта";
 
+   public static final String CLIENT_WITH_OVERDUE_DATE_OF_REPORTS =
+           "Дорогой усыновитель, мы заметили, что ты заполняешь отчет не так подробно, " +
+                   "как необходимо. Пожалуйста, подойди ответственнее к этому занятию." +
+                   " В противном случае волонтеры приюта будут обязаны самолично " +
+                   "проверять условия содержания животного";
 
 
 

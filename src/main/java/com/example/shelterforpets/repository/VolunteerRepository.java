@@ -11,4 +11,5 @@ public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
     //Optional<Volunteer> findByUserId(long chatId);
     Optional<Volunteer> findByUserId(long chatId);
 
+    Long findVolunteerByName(String name);
 }

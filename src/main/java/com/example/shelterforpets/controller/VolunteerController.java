@@ -1,5 +1,6 @@
 package com.example.shelterforpets.controller;
 
+import com.example.shelterforpets.entity.Client;
 import com.example.shelterforpets.entity.Volunteer;
 import com.example.shelterforpets.service.VolunteerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +41,25 @@ public class VolunteerController {
             return ResponseEntity.ok(volunteerService.findVolunteer(userId));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Operation(
+            summary = "Отправка предупреждающего сообщения",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Адресованный пользователь",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    )
+            ),
+            tags = "Сервис для работы с волонтерами"
+    )
+    @GetMapping(value = "/sendWarningMessage/{id}")
+    public void sendWarningMessageFromClient(@PathVariable("id") long userId) {
+        try {
+            volunteerService.sendMessageFromUserWithOverdueDateOfReports(userId);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
     }
 

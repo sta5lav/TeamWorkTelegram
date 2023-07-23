@@ -10,4 +10,6 @@ public interface DogShelterClientRepository extends JpaRepository<DogShelterClie
 
     Optional<DogShelterClient> findByUserId(long chatId);
 
+    DogShelterClient findDogShelterClientByUserId(long id);
+
 }
