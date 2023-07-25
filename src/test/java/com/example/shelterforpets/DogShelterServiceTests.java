@@ -1,5 +1,6 @@
 package com.example.shelterforpets;
 
+import com.example.shelterforpets.constants.Status;
 import com.example.shelterforpets.entity.DogShelterClient;
 import com.example.shelterforpets.repository.ClientRepository;
 import com.example.shelterforpets.repository.DogReportsRepository;
@@ -322,14 +323,22 @@ public class DogShelterServiceTests {
         long userId = 123456L;
         DogShelterClient dogShelterClient = new DogShelterClient();
         dogShelterClient.setUserId(userId);
+        dogShelterClient.setNickNamePet("example");
+        dogShelterClient.setName("example");
+        dogShelterClient.setPhoneNumber("example");
+        dogShelterClient.setStatus(Status.PROBATION);
 
+        when(dogShelterClientRepository.findDogShelterClientByUserId(userId)).thenReturn(dogShelterClient);
         when(dogShelterClientRepository.existsByUserId(userId)).thenReturn(true);
         when(dogShelterClientRepository.save(dogShelterClient)).thenReturn(dogShelterClient);
 
+        dogShelterClientRepository.save(dogShelterClient);
+
         DogShelterClient result = dogShelterService.putClientFromDogShelter(userId, dogShelterClient);
 
+        verify(dogShelterClientRepository).findDogShelterClientByUserId(userId);
         verify(dogShelterClientRepository).existsByUserId(userId);
-        verify(dogShelterClientRepository).save(dogShelterClient);
+        verify(dogShelterClientRepository, times(2)).save(dogShelterClient);
         assertEquals(dogShelterClient, result);
     }
 

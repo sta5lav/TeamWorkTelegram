@@ -1,5 +1,6 @@
 package com.example.shelterforpets;
 
+import com.example.shelterforpets.constants.Status;
 import com.example.shelterforpets.entity.CatShelterClient;
 import com.example.shelterforpets.repository.CatReportsRepository;
 import com.example.shelterforpets.repository.CatShelterClientRepository;
@@ -296,8 +297,9 @@ public class CatShelterServiceTests {
         catShelterClient.setNickNamePet("example");
         catShelterClient.setName("example");
         catShelterClient.setPhoneNumber("example");
+        catShelterClient.setStatus(Status.PROBATION);
 
-
+        when(catShelterClientRepository.findCatShelterClientByUserId(userId)).thenReturn(catShelterClient);
         when(catShelterClientRepository.existsByUserId(userId)).thenReturn(true);
         when(catShelterClientRepository.save(catShelterClient)).thenReturn(catShelterClient);
 
@@ -305,8 +307,9 @@ public class CatShelterServiceTests {
 
         CatShelterClient result = catShelterService.putClientFromCatShelter(userId, catShelterClient);
 
+        verify(catShelterClientRepository).findCatShelterClientByUserId(userId);
         verify(catShelterClientRepository).existsByUserId(userId);
-        verify(catShelterClientRepository).save(catShelterClient);
+        verify(catShelterClientRepository, times(2)).save(catShelterClient);
         assertEquals(catShelterClient, result);
     }
 
