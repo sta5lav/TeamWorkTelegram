@@ -1,8 +1,8 @@
-package com.example.shelterforpets;
+package com.example.shelterforpets.service.menu;
 
 import com.example.shelterforpets.constants.Step;
-import com.example.shelterforpets.service.*;
-import com.example.shelterforpets.service.menu.DogMenuService;
+import com.example.shelterforpets.service.DogShelterService;
+import com.example.shelterforpets.service.ShelterService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
@@ -16,7 +16,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DogMenuServiceTest {
@@ -295,5 +294,25 @@ public class DogMenuServiceTest {
 
         verify(dogShelterService).saveDogShelterClientNameAndPhoneNumber(chatId, name, phoneNumber);
         verify(telegramBot).execute(any(SendMessage.class));
+    }
+
+    @Test
+    public void testDogShelterReportMenu_BackToMenu() {
+        long chatId = 123456789L;
+        String text = "Вернуться в меню приюта";
+
+        Update update = Mockito.mock(Update.class);
+        Message message = Mockito.mock(Message.class);
+        Chat chat = Mockito.mock(Chat.class);
+
+        when(update.message()).thenReturn(message);
+        when(message.chat()).thenReturn(chat);
+        when(message.text()).thenReturn(text);
+        when(chat.id()).thenReturn(chatId);
+
+        dogMenuService.dogShelterReportMenu(update);
+
+        verify(dogShelterService).dogShelterMenu(chatId);
+        verify(shelterService).saveClient(chatId, Step.DOG_SHELTER_MENU);
     }
 }

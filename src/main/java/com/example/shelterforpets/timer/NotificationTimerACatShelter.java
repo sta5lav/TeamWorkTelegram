@@ -18,6 +18,4 @@ public class NotificationTimerACatShelter {
     public void sendWarningMessage() {
         catShelterService.findClientsWithAnOverdueDateOfReports();
     }
-
-
 }

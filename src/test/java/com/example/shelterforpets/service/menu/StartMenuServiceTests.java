@@ -1,4 +1,4 @@
-package com.example.shelterforpets;
+package com.example.shelterforpets.service.menu;
 
 import com.example.shelterforpets.constants.Step;
 import com.example.shelterforpets.service.CatShelterService;

@@ -1,6 +1,5 @@
 package com.example.shelterforpets.controller;
 
-import com.example.shelterforpets.entity.Client;
 import com.example.shelterforpets.entity.Volunteer;
 import com.example.shelterforpets.service.VolunteerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +34,7 @@ public class VolunteerController {
                     )},
             tags = "Сервис для работы с волонтерами"
     )
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<Volunteer> findVolunteer(@PathVariable("id") long userId) {
         try {
             return ResponseEntity.ok(volunteerService.findVolunteer(userId));
@@ -81,8 +80,8 @@ public class VolunteerController {
             tags = "Сервис для работы с волонтерами"
     )
     @PostMapping(value = "/{id}")
-    public ResponseEntity<Volunteer> postVolunteer(@PathVariable("id") long userId,
-                                                          @RequestBody Volunteer volunteer) {
+    public ResponseEntity<Volunteer> createVolunteer(@PathVariable("id") long userId,
+                                                     @RequestBody Volunteer volunteer) {
         return ResponseEntity.ok(volunteerService.postVolunteer(userId, volunteer));
     }
 
@@ -104,8 +103,8 @@ public class VolunteerController {
             tags = "Сервис для работы с волонтерами"
     )
     @PutMapping(value = "/{id}")
-    public Volunteer putVolunteer(@PathVariable long userId,
-                                         @RequestBody Volunteer volunteer) {
+    public Volunteer updateVolunteer(@PathVariable("id") long userId,
+                                     @RequestBody Volunteer volunteer) {
         return volunteerService.putVolunteer(userId, volunteer);
     }
 
@@ -120,7 +119,12 @@ public class VolunteerController {
             tags = "Сервис для работы с волонтерами"
     )
     @DeleteMapping(value = "/{id}")
-    public void deleteVolunteer(@PathVariable("id") long userId) {
-        volunteerService.deleteVolunteer(userId);
+    public ResponseEntity<Object> deleteVolunteer(@PathVariable("id") long userId) {
+        try {
+            volunteerService.deleteVolunteer(userId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

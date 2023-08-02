@@ -4,6 +4,7 @@ package com.example.shelterforpets.service;
 import com.example.shelterforpets.entity.Client;
 import com.example.shelterforpets.entity.Volunteer;
 import com.example.shelterforpets.exceptions.ClientNotFoundException;
+import com.example.shelterforpets.exceptions.VolunteerNotFoundException;
 import com.example.shelterforpets.repository.VolunteerRepository;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class VolunteerService {
     public Volunteer findVolunteer(long userId) {
         return volunteerRepository
                 .findByUserId(userId)
-                .orElseThrow(() -> new ClientNotFoundException("Клиента нет в базе данных!"));
+                .orElseThrow(() -> new VolunteerNotFoundException("Волонтера нет в базе данных!"));
     }
 
     /**
@@ -43,7 +44,7 @@ public class VolunteerService {
      * @return Object Volunteer
      */
     public Volunteer postVolunteer(long userId, Volunteer volunteer) {
-        if (volunteerRepository.existsByUserId(userId) == null) {
+        if (!volunteerRepository.existsByUserId(userId)) {
             volunteer.setUserId(userId);
             return volunteerRepository.save(volunteer);
         } return null;
@@ -56,7 +57,7 @@ public class VolunteerService {
      * @return Object Volunteer
      */
     public Volunteer putVolunteer(long userId, Volunteer volunteer) {
-        if (volunteerRepository.existsByUserId(userId) != null) {
+        if (volunteerRepository.existsByUserId(userId)) {
             volunteer.setUserId(userId);
             return volunteerRepository.save(volunteer);
         } return null;
