@@ -1,19 +1,23 @@
-package com.example.shelterforpets;
+package com.example.shelterforpets.service;
 
 import com.example.shelterforpets.constants.Status;
+import com.example.shelterforpets.entity.CatReport;
 import com.example.shelterforpets.entity.CatShelterClient;
+import com.example.shelterforpets.entity.Client;
+import com.example.shelterforpets.entity.Volunteer;
 import com.example.shelterforpets.repository.CatReportsRepository;
 import com.example.shelterforpets.repository.CatShelterClientRepository;
 import com.example.shelterforpets.repository.ClientRepository;
 import com.example.shelterforpets.repository.VolunteerRepository;
-import com.example.shelterforpets.service.CatShelterService;
-import com.example.shelterforpets.service.NotificationService;
-import com.example.shelterforpets.service.ShelterService;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Chat;
+import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.Update;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;

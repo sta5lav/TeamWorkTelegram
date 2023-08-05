@@ -1,4 +1,4 @@
-package com.example.shelterforpets;
+package com.example.shelterforpets.service;
 
 import com.example.shelterforpets.constants.Status;
 import com.example.shelterforpets.entity.DogShelterClient;
@@ -6,9 +6,6 @@ import com.example.shelterforpets.repository.ClientRepository;
 import com.example.shelterforpets.repository.DogReportsRepository;
 import com.example.shelterforpets.repository.DogShelterClientRepository;
 import com.example.shelterforpets.repository.VolunteerRepository;
-import com.example.shelterforpets.service.DogShelterService;
-import com.example.shelterforpets.service.NotificationService;
-import com.example.shelterforpets.service.ShelterService;
 import com.pengrad.telegrambot.TelegramBot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

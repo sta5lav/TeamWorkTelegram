@@ -4,6 +4,7 @@ import com.example.shelterforpets.constants.Status;
 import com.example.shelterforpets.entity.CatReport;
 import com.example.shelterforpets.entity.CatShelterClient;
 import com.example.shelterforpets.exceptions.ClientNotFoundException;
+import com.example.shelterforpets.exceptions.VolunteerNotFoundException;
 import com.example.shelterforpets.repository.CatReportsRepository;
 import com.example.shelterforpets.repository.CatShelterClientRepository;
 import com.example.shelterforpets.repository.ClientRepository;
@@ -161,7 +162,7 @@ public class CatShelterService {
         volunteerRepository.findByUserId(answer); //Добавил случайный выбор волонтера
 
         long volunteerId = volunteerRepository.findByUserId(answer).orElseThrow(() ->
-                new RuntimeException("Волонтера нет в базе данных!")).getUserId();
+                new VolunteerNotFoundException("Волонтера нет в базе данных!")).getUserId();
         String messageToVolunteer = "С вами хочет связаться клиент: " +
                 clientRepository.findByUserId(chatId).getUserId();
         notificationService.sendNotification(volunteerId, messageToVolunteer);

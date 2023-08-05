@@ -3,7 +3,6 @@ package com.example.shelterforpets.controller;
 import com.example.shelterforpets.entity.CatShelterClient;
 import com.example.shelterforpets.service.CatShelterService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
@@ -37,7 +36,7 @@ public class CatShelterController {
                     )},
             tags = "Сервис для работы с клиентами приюта для кошек"
     )
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<CatShelterClient> findClientFromCatShelter(@PathVariable("id") long userId) {
         try {
             return ResponseEntity.ok(catShelterService.findClientFromCatShelter(userId));
@@ -64,8 +63,8 @@ public class CatShelterController {
             tags = "Сервис для работы с клиентами приюта для кошек"
     )
     @PostMapping(value = "/{id}")
-    public ResponseEntity<CatShelterClient> postClientFromCatShelter(@PathVariable("id") long userId,
-                                                                     @RequestBody CatShelterClient catShelterClient) {
+    public ResponseEntity<CatShelterClient> createClientFromCatShelter(@PathVariable("id") long userId,
+                                                                       @RequestBody CatShelterClient catShelterClient) {
         return ResponseEntity.ok(catShelterService.postClientFromCatShelter(userId, catShelterClient));
     }
 
@@ -88,8 +87,8 @@ public class CatShelterController {
             tags = "Сервис для работы с клиентами приюта для кошек"
     )
     @PutMapping(value = "/{id}")
-    public CatShelterClient putClientFromCatShelter(@PathVariable long userId,
-                                                    @RequestBody CatShelterClient catShelterClient) {
+    public CatShelterClient updateClientFromCatShelter(@PathVariable("id") long userId,
+                                                       @RequestBody CatShelterClient catShelterClient) {
         return catShelterService.putClientFromCatShelter(userId, catShelterClient);
     }
 
@@ -100,12 +99,18 @@ public class CatShelterController {
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE
                     )
+
             ),
+
             tags = "Сервис для работы с клиентами приюта для кошек"
     )
     @DeleteMapping(value = "/{id}")
-    public void deleteClientFromCatShelter(@PathVariable("id") long userId) {
-        catShelterService.deleteClientFromCatShelter(userId);
+    public ResponseEntity deleteClientFromCatShelter(@PathVariable("id") long userId) {
+        try {
+            catShelterService.deleteClientFromCatShelter(userId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
-
 }

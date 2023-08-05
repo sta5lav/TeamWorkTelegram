@@ -1,7 +1,6 @@
-package com.example.shelterforpets;
+package com.example.shelterforpets.service;
 
 import com.example.shelterforpets.constants.Step;
-import com.example.shelterforpets.service.*;
 import com.example.shelterforpets.service.menu.CatMenuService;
 import com.example.shelterforpets.service.menu.DogMenuService;
 import com.example.shelterforpets.service.menu.StartMenuService;
@@ -178,5 +177,41 @@ public class StepServiceTests {
         stepService.process(update);
 
         verify(dogMenuService).dogShelterConsultantMenu(chatId, text);
+    }
+
+    @Test
+    public void testProcess_catShelterReportMenu() {
+        Update update = Mockito.mock(Update.class);
+        Message message = Mockito.mock(Message.class);
+        Chat chat = Mockito.mock(Chat.class);
+        String text = "text";
+        long chatId = 1238L;
+        when(update.message()).thenReturn(message);
+        when(message.text()).thenReturn(text);
+        when(message.chat()).thenReturn(chat);
+        when(chat.id()).thenReturn(chatId);
+        when(shelterService.getStepClient(chatId)).thenReturn(Step.CAT_SHELTER_REPORT_MENU);
+
+        stepService.process(update);
+
+        verify(catMenuService).catShelterReportMenu(update);
+    }
+
+    @Test
+    public void testProcess_dogShelterReportMenu() {
+        Update update = Mockito.mock(Update.class);
+        Message message = Mockito.mock(Message.class);
+        Chat chat = Mockito.mock(Chat.class);
+        String text = "text";
+        long chatId = 1238L;
+        when(update.message()).thenReturn(message);
+        when(message.text()).thenReturn(text);
+        when(message.chat()).thenReturn(chat);
+        when(chat.id()).thenReturn(chatId);
+        when(shelterService.getStepClient(chatId)).thenReturn(Step.DOG_SHELTER_REPORT_MENU);
+
+        stepService.process(update);
+
+        verify(dogMenuService).dogShelterReportMenu(update);
     }
 }

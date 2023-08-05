@@ -34,7 +34,7 @@ public class DogShelterController {
                     )},
             tags = "Сервис для работы с клиентами приюта для собак"
     )
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<DogShelterClient> findClientFromDogShelter(@PathVariable("id") long userId) {
         try {
             return ResponseEntity.ok(dogShelterService.findClientFromDogShelter(userId));
@@ -61,8 +61,8 @@ public class DogShelterController {
             tags = "Сервис для работы с клиентами приюта для собак"
     )
     @PostMapping(value = "/{id}")
-    public ResponseEntity<DogShelterClient> postClientFromDogShelter(@PathVariable("id") long userId,
-                                                                     @RequestBody DogShelterClient dogShelterClient) {
+    public ResponseEntity<DogShelterClient> createClientFromDogShelter(@PathVariable("id") long userId,
+                                                                       @RequestBody DogShelterClient dogShelterClient) {
         return ResponseEntity.ok(dogShelterService.postClientFromDogShelter(userId, dogShelterClient));
     }
 
@@ -84,8 +84,8 @@ public class DogShelterController {
             tags = "Сервис для работы с клиентами приюта для собак"
     )
     @PutMapping(value = "/{id}")
-    public DogShelterClient putClientFromDogShelter(@PathVariable("id") long userId,
-                                                    @RequestBody DogShelterClient dogShelterClient) {
+    public DogShelterClient updateClientFromDogShelter(@PathVariable("id") long userId,
+                                                       @RequestBody DogShelterClient dogShelterClient) {
         return dogShelterService.putClientFromDogShelter(userId, dogShelterClient);
     }
 
@@ -100,7 +100,12 @@ public class DogShelterController {
             tags = "Сервис для работы с клиентами приюта для собак"
     )
     @DeleteMapping(value = "/{id}")
-    public void deleteClientFromDogShelter(@PathVariable("id") long userId) {
-        dogShelterService.deleteClientFromDogShelter(userId);
+    public ResponseEntity<Object> deleteClientFromDogShelter(@PathVariable("id") long userId) {
+        try {
+            dogShelterService.deleteClientFromDogShelter(userId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
